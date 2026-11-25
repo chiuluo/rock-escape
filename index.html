@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>岩石探索館與地質密室逃脫｜10種常見岩石互動學習網</title>
+    <title>地質探索館與密室逃脫大挑戰｜10種常見岩石互動學習網</title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Google Fonts Noto Sans TC -->
@@ -19,12 +19,12 @@
                     },
                     colors: {
                         museum: {
-                            bg: '#080C14',
-                            panel: '#0F1624',
-                            card: '#162035',
+                            bg: '#070B14',
+                            panel: '#0E1525',
+                            card: '#152036',
                             gold: '#D4A853',
-                            goldLight: '#F3D28B',
-                            teal: '#2A7B73'
+                            goldLight: '#F4D58D',
+                            teal: '#1F7A70'
                         }
                     }
                 }
@@ -34,65 +34,103 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #080C14;
+            background-color: #070B14;
             color: #F1F5F9;
             overflow-x: hidden;
         }
-        /* 博物館展櫃聚光燈背景 */
+        /* 博物館聚光燈展櫃背景 */
         .specimen-stage {
-            background: radial-gradient(circle at 50% 42%, #1D283E 0%, #0A0F1A 75%);
-            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85);
+            background: radial-gradient(circle at 50% 42%, #1D2A44 0%, #090E1A 76%);
+            box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.9);
         }
         .specimen-shadow {
-            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0) 70%);
         }
         @keyframes floatGentle {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-6px); }
         }
         .animate-float {
-            animation: floatGentle 4.2s ease-in-out infinite;
+            animation: floatGentle 4s ease-in-out infinite;
         }
-        /* 捲軸美化 */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        /* 密碼錯誤左右劇烈震動 */
+        @keyframes lockShake {
+            0%, 100% { transform: translateX(0); }
+            15%, 45%, 75% { transform: translateX(-10px); }
+            30%, 60%, 90% { transform: translateX(10px); }
         }
-        ::-webkit-scrollbar-track {
-            background: #0F1624;
+        .animate-lock-shake {
+            animation: lockShake 0.45s cubic-bezier(.36,.07,.19,.97) both;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 9999px;
+        /* 倒數15秒全螢幕紅色警報脈衝 */
+        @keyframes dangerPulse {
+            0%, 100% { box-shadow: inset 0 0 0px rgba(239, 68, 68, 0); }
+            50% { box-shadow: inset 0 0 90px rgba(239, 68, 68, 0.65); }
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #D4A853;
+        .danger-screen-pulse {
+            animation: dangerPulse 0.9s infinite;
         }
+        /* 失敗畫面紅色掃描警報導光 */
+        @keyframes redBeaconSweep {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .lockdown-bg {
+            background: linear-gradient(125deg, #2A0408 0%, #0B060C 35%, #450A0A 65%, #09050A 100%);
+            background-size: 250% 250%;
+            animation: redBeaconSweep 5s ease infinite;
+        }
+        /* 故障文字微震特效 */
+        @keyframes glitchSkew {
+            0%, 100% { transform: skew(0deg); text-shadow: -2px 0 #ef4444, 2px 0 #38bdf8; }
+            20% { transform: skew(-3deg); text-shadow: 3px 0 #ef4444, -3px 0 #38bdf8; }
+            40% { transform: skew(2deg); text-shadow: -2px 0 #ef4444, 2px 0 #f59e0b; }
+            60% { transform: skew(0deg); }
+        }
+        .glitch-title {
+            animation: glitchSkew 2.2s infinite;
+        }
+        /* 勝利畫面金色放射光芒 */
+        .victory-rays {
+            background: radial-gradient(circle at 50% 25%, rgba(245, 158, 11, 0.25) 0%, rgba(14, 21, 37, 0.96) 68%);
+        }
+        /* 自訂捲軸 */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0E1525; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D4A853; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-amber-500 selection:text-slate-950">
 
+    <!-- 倒數15秒全螢幕紅色警報外框遮罩 -->
+    <div id="danger-overlay" class="fixed inset-0 pointer-events-none z-50 hidden danger-screen-pulse"></div>
+
+    <!-- 全螢幕彩帶特效畫布 (通關勝利時啟動) -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50 hidden"></canvas>
+
     <!-- 頂部博物館導覽列 -->
-    <header class="sticky top-0 z-40 bg-[#0B101B]/95 backdrop-blur-md border-b border-amber-500/30 shadow-xl">
+    <header class="sticky top-0 z-40 bg-[#0A0F1D]/95 backdrop-blur-md border-b border-amber-500/30 shadow-2xl">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-            <!-- 網站識別 -->
+            <!-- 品牌標題 -->
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-amber-600 to-teal-800 flex items-center justify-center text-xl shadow-md border border-amber-300/40">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-amber-600 to-teal-800 flex items-center justify-center text-xl shadow-lg border border-amber-300/40">
                     🪨
                 </div>
                 <div>
-                    <h1 class="text-lg sm:text-xl font-black tracking-wider text-amber-300">岩石探索館與地質密室逃脫</h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">臺灣常見 10 種岩石標本展示櫃 ＆ 線上密室闖關系統</p>
+                    <h1 class="text-lg sm:text-xl font-black tracking-wider text-amber-300">地質探索館與密室逃脫大挑戰</h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">臺灣常見 10 種岩石標本展示櫃 ＆ 限時電子密碼鎖密室</p>
                 </div>
             </div>
 
-            <!-- 模式切換標籤 -->
-            <nav class="flex items-center gap-1.5 bg-[#131B2E] p-1.5 rounded-2xl border border-slate-700/80">
-                <button id="nav-museum" onclick="switchMode('museum')" class="px-4 py-2 rounded-xl text-sm sm:text-base font-bold transition-all flex items-center gap-2 bg-amber-500 text-slate-950 shadow-md">
-                    <span>🏛️</span> <span>岩石互動學習圖鑑</span>
+            <!-- 雙模式切換按鈕 -->
+            <nav class="flex items-center gap-1.5 bg-[#131C31] p-1.5 rounded-2xl border border-slate-700/80">
+                <button id="nav-museum" onclick="switchMode('museum')" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-md">
+                    <span>🏛️</span> <span>岩石探索館（自主學習）</span>
                 </button>
-                <button id="nav-escape" onclick="switchMode('escape')" class="px-4 py-2 rounded-xl text-sm sm:text-base font-bold transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800">
-                    <span>🔐</span> <span>地質密室逃脫挑戰</span>
+                <button id="nav-escape" onclick="switchMode('escape')" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <span>🔐</span> <span>地質密室逃脫（限時挑戰）</span>
                 </button>
             </nav>
 
@@ -103,315 +141,390 @@
         </div>
     </header>
 
-    <!-- 自訂提示訊息條 (不使用 alert) -->
+    <!-- 自訂提示訊息條 (禁止使用 alert) -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 hidden max-w-sm bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border-l-4 border-amber-400 flex items-center gap-3 transition-all">
         <span id="toast-icon" class="text-xl">💡</span>
-        <p id="toast-text" class="text-sm font-medium leading-snug"></p>
+        <p id="toast-text" class="text-sm font-bold leading-snug"></p>
     </div>
 
     <!-- 主內容區 -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
 
         <!-- =========================================================
-             模式一：【岩石互動學習圖鑑】
+             模式一：【🏛️ 岩石探索館（自主學習）】
              ========================================================= -->
         <section id="mode-museum" class="space-y-6">
-            <!-- 頂部展示櫃控制條 -->
-            <div class="flex flex-wrap items-center justify-between gap-3 bg-[#0F1624] px-5 py-3.5 rounded-2xl border border-slate-800">
-                <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-amber-400 font-bold text-sm mr-1">岩石分類篩選：</span>
-                    <button onclick="setRockFilter('all')" data-cat="all" class="cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 text-slate-950">全部 (10種)</button>
-                    <button onclick="setRockFilter('火成岩')" data-cat="火成岩" class="cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">🌋 火成岩 (3)</button>
-                    <button onclick="setRockFilter('沉積岩')" data-cat="沉積岩" class="cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">🏖️ 沉積岩 (3)</button>
-                    <button onclick="setRockFilter('變質岩')" data-cat="變質岩" class="cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">💎 變質岩 (4)</button>
+
+            <!-- 子視圖 A：10 種岩石網格展示櫃總覽 -->
+            <div id="museum-grid-view" class="space-y-5">
+                <div class="bg-[#0E1525] p-5 sm:p-6 rounded-3xl border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+                    <div class="space-y-1">
+                        <span class="inline-block px-3 py-0.5 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-bold">
+                            互動學習展示櫃 • 共 10 件典藏岩石標本
+                        </span>
+                        <h2 class="text-2xl font-black text-white">點選任一岩石標本進入展示櫃觀察與聆聽語音</h2>
+                        <p class="text-sm text-slate-300">支援滑鼠拖曳與鍵盤左右鍵旋轉標本，並附有外觀、產地、用途語音導覽。</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="filterGallery('all')" data-cat="all" class="gal-cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black bg-amber-500 text-slate-950">全部 (10)</button>
+                        <button onclick="filterGallery('火成岩')" data-cat="火成岩" class="gal-cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">🌋 火成岩 (3)</button>
+                        <button onclick="filterGallery('沉積岩')" data-cat="沉積岩" class="gal-cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">🏖️ 沉積岩 (3)</button>
+                        <button onclick="filterGallery('變質岩')" data-cat="變質岩" class="gal-cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">💎 變質岩 (4)</button>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-2.5 ml-auto">
-                    <span class="text-xs text-slate-400 hidden md:inline">滑鼠拖曳 / ← → 鍵可旋轉標本</span>
-                    <button onclick="prevSpecimen()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold transition border border-slate-700">‹ 上一件</button>
-                    <button onclick="nextSpecimen()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold transition border border-slate-700">下一件 ›</button>
+                <!-- 10 種岩石標本網格卡片 -->
+                <div id="gallery-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <!-- 由 JS 動態生成 10 張標本展示櫃卡片 -->
+                </div>
+
+                <!-- 底部前往密室逃脫行動呼籲 -->
+                <div class="bg-gradient-to-r from-[#13293D] via-[#18384A] to-[#1B433E] rounded-3xl p-6 border border-teal-500/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+                    <div class="space-y-1 text-center sm:text-left">
+                        <h3 class="text-xl font-black text-amber-300">熟悉這 10 種岩石的外觀、產地與用途了嗎？</h3>
+                        <p class="text-sm text-slate-300">進入「地質密室逃脫」，每題限時 2 分鐘破解 5 道電子密碼鎖，把成績傳送給老師！</p>
+                    </div>
+                    <button onclick="switchMode('escape')" class="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base shadow-lg transition transform hover:scale-105 shrink-0">
+                        🔐 進入限時密室逃脫
+                    </button>
                 </div>
             </div>
 
-            <!-- 核心展示櫃主舞台 -->
-            <div class="bg-[#0B101D] rounded-3xl p-5 sm:p-7 border border-slate-800 shadow-2xl">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 items-center">
+            <!-- 子視圖 B：單一岩石沉浸式展示櫃視窗 (點選網格卡片後開啟) -->
+            <div id="museum-detail-view" class="hidden space-y-5">
+                <!-- 返回展示櫃與上一件/下一件導覽列 -->
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-[#0E1525] px-5 py-3.5 rounded-2xl border border-slate-800">
+                    <button onclick="backToGalleryGrid()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-sm flex items-center gap-2 border border-slate-700 transition">
+                        <span>←</span> <span>返回展示櫃總覽</span>
+                    </button>
+                    <div class="text-xs sm:text-sm text-slate-400 font-bold">
+                        標本典藏編號：<span id="detail-counter" class="text-amber-300">01 / 10</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="stepDetailSpecimen(-1)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold border border-slate-700 transition">‹ 上一件</button>
+                        <button onclick="stepDetailSpecimen(1)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold border border-slate-700 transition">下一件 ›</button>
+                    </div>
+                </div>
 
-                    <!-- 左側：暖金框標本展示箱 (.png 圖片 + 備援向量圖) -->
-                    <div class="lg:col-span-5 flex flex-col items-center">
-                        <div id="specimen-box" tabindex="0" class="specimen-stage w-full aspect-square max-w-[410px] rounded-2xl border-2 border-amber-400/80 relative flex flex-col items-center justify-center p-5 cursor-grab active:cursor-grabbing select-none outline-none focus:ring-2 focus:ring-amber-400 overflow-hidden">
-                            <!-- 左上角編號與分類徽章 -->
-                            <div class="absolute top-3.5 left-3.5 z-10 px-3 py-1 rounded-lg bg-slate-900/90 border border-amber-500/40 text-xs font-bold text-amber-300">
-                                標本 #<span id="spec-num">01</span> • <span id="spec-cat">火成岩</span>
+                <!-- 主展示舞台 -->
+                <div class="bg-[#0B101D] rounded-3xl p-5 sm:p-7 border border-slate-800 shadow-2xl">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 items-center">
+
+                        <!-- 左側：大型標本展示框 -->
+                        <div class="lg:col-span-5 flex flex-col items-center">
+                            <div id="specimen-stage-box" tabindex="0" class="specimen-stage w-full aspect-square max-w-[420px] rounded-2xl border-2 border-amber-400/80 relative flex flex-col items-center justify-center p-5 cursor-grab active:cursor-grabbing select-none outline-none focus:ring-2 focus:ring-amber-400 overflow-hidden">
+                                <div class="absolute top-3.5 left-3.5 z-10 px-3 py-1 rounded-lg bg-slate-900/90 border border-amber-500/40 text-xs font-bold text-amber-300">
+                                    編號 #<span id="detail-num">01</span> • <span id="detail-cat">火成岩</span>
+                                </div>
+                                <div id="detail-img-tag" class="absolute top-3.5 right-3.5 z-10 px-2.5 py-1 rounded-lg bg-slate-900/85 border border-slate-700 text-[11px] font-mono text-slate-400">
+                                    images/andesite.png
+                                </div>
+
+                                <!-- 標本視覺容器 -->
+                                <div id="detail-specimen-holder" class="w-60 h-60 sm:w-64 sm:h-64 flex items-center justify-center animate-float mt-4"></div>
+
+                                <div class="specimen-shadow w-48 h-5 rounded-full mt-1"></div>
+
+                                <div class="mt-2.5 px-4 py-1 rounded-full bg-[#11192B]/90 border border-slate-700 text-xs text-slate-300 flex items-center gap-2 shadow">
+                                    <span>↔</span> <span>左右拖曳標本或按 ← → 方向鍵旋轉</span>
+                                </div>
                             </div>
 
-                            <!-- 右上角圖片檔案提示標籤 -->
-                            <div id="spec-img-badge" class="absolute top-3.5 right-3.5 z-10 px-2.5 py-1 rounded-lg bg-slate-900/85 border border-slate-700 text-[11px] font-mono text-slate-300">
-                                images/andesite.png
-                            </div>
-
-                            <!-- 標本視覺容器 (優先載入 PNG，若尚未上傳則優雅顯示備援標本圖) -->
-                            <div id="spec-canvas-wrap" class="w-60 h-60 sm:w-64 sm:h-64 flex items-center justify-center animate-float mt-4">
-                                <!-- 由 JS 動態渲染 -->
-                            </div>
-
-                            <!-- 標本底部懸浮陰影 -->
-                            <div class="specimen-shadow w-48 h-5 rounded-full mt-1"></div>
-
-                            <!-- 底部拖曳旋轉提示膠囊 -->
-                            <div class="mt-2.5 px-4 py-1 rounded-full bg-[#11192B]/90 border border-slate-700 text-xs text-slate-300 flex items-center gap-2 shadow">
-                                <span>↔</span> <span>左右拖曳或拉動下方滑桿檢視標本</span>
+                            <!-- 旋轉控制按鈕列 -->
+                            <div class="w-full max-w-[420px] mt-3.5 flex flex-wrap items-center justify-between gap-2 bg-[#11192B] px-4 py-3 rounded-2xl border border-slate-800">
+                                <button onclick="toggleAutoSpin()" class="px-3.5 py-1.5 rounded-full border border-amber-500/60 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition">
+                                    <span>↻</span> <span id="spin-status-label">自動旋轉：開</span>
+                                </button>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="nudgeSpin(-25)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold">↺ 左轉</button>
+                                    <button onclick="nudgeSpin(25)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold">右轉 ↻</button>
+                                    <button onclick="resetSpin()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-bold">重設</button>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- 展櫃下方檢視控制列：自動旋轉 + 縮放與角度滑桿 -->
-                        <div class="w-full max-w-[410px] mt-3.5 bg-[#11192B] p-3.5 rounded-2xl border border-slate-800 space-y-2.5">
-                            <div class="flex items-center justify-between gap-2">
-                                <button onclick="toggleAutoSpin()" id="btn-spin" class="px-3.5 py-1.5 rounded-full border border-amber-500/60 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition">
-                                    <span>↻</span> <span id="spin-label">自動旋轉：開</span>
-                                </button>
-                                <button onclick="resetSpecimenTransform()" class="px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
-                                    ⟲ 重設視角
+                        <!-- 右側：岩石標題 + 簡介語音 + 外觀/產地/用途三卡片 -->
+                        <div class="lg:col-span-7 space-y-4">
+                            <div class="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-slate-800">
+                                <div class="flex items-baseline gap-4">
+                                    <span class="text-sm font-bold text-amber-400 tracking-[0.2em]">岩 石</span>
+                                    <h2 id="detail-name" class="text-3xl sm:text-4xl font-black tracking-[0.15em] text-white">安山岩</h2>
+                                </div>
+                                <button onclick="speakFullDetail()" class="px-4 py-2 rounded-full border border-amber-400/60 bg-amber-500/15 hover:bg-amber-500/30 text-amber-300 text-sm font-bold flex items-center gap-2 transition shadow">
+                                    <span>🔊</span> <span>簡介語音</span>
                                 </button>
                             </div>
-                            <div class="grid grid-cols-2 gap-3 text-xs text-slate-300">
-                                <label class="flex flex-col gap-1">
-                                    <span class="flex justify-between"><span>旋轉傾斜角度</span><strong id="val-angle" class="text-amber-300">0°</strong></span>
-                                    <input type="range" id="slider-angle" min="-180" max="180" value="0" oninput="onManualAngleSlide(this.value)" class="accent-amber-400 cursor-pointer">
-                                </label>
-                                <label class="flex flex-col gap-1">
-                                    <span class="flex justify-between"><span>標本放大倍率</span><strong id="val-zoom" class="text-amber-300">1.0x</strong></span>
-                                    <input type="range" id="slider-zoom" min="0.8" max="1.45" step="0.05" value="1" oninput="onManualZoomSlide(this.value)" class="accent-amber-400 cursor-pointer">
-                                </label>
+
+                            <!-- 外觀卡片 -->
+                            <div class="bg-[#152036] rounded-2xl p-4 sm:p-5 border border-slate-700/70 hover:border-amber-500/40 transition flex items-start justify-between gap-4">
+                                <div class="space-y-2 flex-1">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xs font-bold tracking-[0.3em] text-amber-400">外 觀</span>
+                                        <div class="h-px flex-1 max-w-[120px] bg-slate-700"></div>
+                                    </div>
+                                    <p id="detail-appearance" class="text-base sm:text-lg text-slate-100 leading-relaxed font-medium"></p>
+                                </div>
+                                <button onclick="speakFieldDetail('appearance')" title="朗讀外觀" class="shrink-0 w-11 h-11 rounded-full bg-[#1E2942] hover:bg-amber-500 hover:text-slate-950 border border-slate-600 flex items-center justify-center text-base transition">
+                                    🔊
+                                </button>
+                            </div>
+
+                            <!-- 產地卡片 -->
+                            <div class="bg-[#152036] rounded-2xl p-4 sm:p-5 border border-slate-700/70 hover:border-amber-500/40 transition flex items-start justify-between gap-4">
+                                <div class="space-y-2 flex-1">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xs font-bold tracking-[0.3em] text-amber-400">產 地</span>
+                                        <div class="h-px flex-1 max-w-[120px] bg-slate-700"></div>
+                                    </div>
+                                    <p id="detail-origin" class="text-base sm:text-lg text-slate-100 leading-relaxed font-medium"></p>
+                                </div>
+                                <button onclick="speakFieldDetail('origin')" title="朗讀產地" class="shrink-0 w-11 h-11 rounded-full bg-[#1E2942] hover:bg-amber-500 hover:text-slate-950 border border-slate-600 flex items-center justify-center text-base transition">
+                                    🔊
+                                </button>
+                            </div>
+
+                            <!-- 用途卡片 -->
+                            <div class="bg-[#152036] rounded-2xl p-4 sm:p-5 border border-slate-700/70 hover:border-amber-500/40 transition flex items-start justify-between gap-4">
+                                <div class="space-y-2 flex-1">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-xs font-bold tracking-[0.3em] text-amber-400">用 途</span>
+                                        <div class="h-px flex-1 max-w-[120px] bg-slate-700"></div>
+                                    </div>
+                                    <p id="detail-uses" class="text-base sm:text-lg text-slate-100 leading-relaxed font-medium"></p>
+                                </div>
+                                <button onclick="speakFieldDetail('uses')" title="朗讀用途" class="shrink-0 w-11 h-11 rounded-full bg-[#1E2942] hover:bg-amber-500 hover:text-slate-950 border border-slate-600 flex items-center justify-center text-base transition">
+                                    🔊
+                                </button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- 右側：岩石標題 + 簡介語音 + 三大資訊卡片 (外觀、產地、用途) -->
-                    <div class="lg:col-span-7 space-y-4">
-                        <!-- 標題列 -->
-                        <div class="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-slate-800">
-                            <div class="flex items-baseline gap-4">
-                                <span class="text-sm font-bold text-amber-400 tracking-[0.2em]">岩 石</span>
-                                <h2 id="spec-name" class="text-3xl sm:text-4xl font-black tracking-[0.15em] text-white">安山岩</h2>
-                            </div>
-                            <button onclick="readFullSpecimen()" class="px-4 py-2 rounded-full border border-amber-400/60 bg-amber-500/10 hover:bg-amber-500/25 text-amber-300 text-sm font-bold flex items-center gap-2 transition shadow">
-                                <span>🔊</span> <span>簡介語音</span>
-                            </button>
-                        </div>
-
-                        <!-- 卡片 1：外 觀 -->
-                        <div class="bg-[#141D30] rounded-2xl p-4 sm:p-5 border border-slate-700/70 hover:border-amber-500/40 transition flex items-start justify-between gap-4">
-                            <div class="space-y-2 flex-1">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xs font-bold tracking-[0.3em] text-amber-400">外 觀</span>
-                                    <div class="h-px flex-1 max-w-[120px] bg-slate-700"></div>
-                                </div>
-                                <p id="spec-appearance" class="text-base sm:text-lg text-slate-100 leading-relaxed font-medium"></p>
-                            </div>
-                            <button onclick="readSingleField('appearance')" title="朗讀外觀" class="shrink-0 w-11 h-11 rounded-full bg-[#1E2942] hover:bg-amber-500 hover:text-slate-950 border border-slate-600 flex items-center justify-center text-base transition">
-                                🔊
-                            </button>
-                        </div>
-
-                        <!-- 卡片 2：產 地 -->
-                        <div class="bg-[#141D30] rounded-2xl p-4 sm:p-5 border border-slate-700/70 hover:border-amber-500/40 transition flex items-start justify-between gap-4">
-                            <div class="space-y-2 flex-1">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xs font-bold tracking-[0.3em] text-amber-400">產 地</span>
-                                    <div class="h-px flex-1 max-w-[120px] bg-slate-700"></div>
-                                </div>
-                                <p id="spec-origin" class="text-base sm:text-lg text-slate-100 leading-relaxed font-medium"></p>
-                            </div>
-                            <button onclick="readSingleField('origin')" title="朗讀產地" class="shrink-0 w-11 h-11 rounded-full bg-[#1E2942] hover:bg-amber-500 hover:text-slate-950 border border-slate-600 flex items-center justify-center text-base transition">
-                                🔊
-                            </button>
-                        </div>
-
-                        <!-- 卡片 3：用 途 -->
-                        <div class="bg-[#141D30] rounded-2xl p-4 sm:p-5 border border-slate-700/70 hover:border-amber-500/40 transition flex items-start justify-between gap-4">
-                            <div class="space-y-2 flex-1">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-xs font-bold tracking-[0.3em] text-amber-400">用 途</span>
-                                    <div class="h-px flex-1 max-w-[120px] bg-slate-700"></div>
-                                </div>
-                                <p id="spec-uses" class="text-base sm:text-lg text-slate-100 leading-relaxed font-medium"></p>
-                            </div>
-                            <button onclick="readSingleField('uses')" title="朗讀用途" class="shrink-0 w-11 h-11 rounded-full bg-[#1E2942] hover:bg-amber-500 hover:text-slate-950 border border-slate-600 flex items-center justify-center text-base transition">
-                                🔊
-                            </button>
-                        </div>
-                    </div>
                 </div>
-            </div>
-
-            <!-- 底部 10 種岩石標本展示櫃總覽列 -->
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-sm sm:text-base font-bold text-amber-300 flex items-center gap-2">
-                        <span>🗂️ 點選下方展示櫃切換 10 種岩石標本：</span>
-                    </h3>
-                    <span class="text-xs text-slate-400">支援 images/*.png 實體標本照</span>
-                </div>
-                <div id="rock-thumb-grid" class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2.5">
-                    <!-- JS 動態生成 10 張標本卡片 -->
-                </div>
-            </div>
-
-            <!-- 前往密室逃脫橫幅 -->
-            <div class="bg-gradient-to-r from-[#132A3A] via-[#173647] to-[#1A3D3B] rounded-3xl p-6 border border-teal-500/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
-                <div class="space-y-1 text-center sm:text-left">
-                    <h3 class="text-xl font-black text-amber-300">觀察完 10 種岩石標本的外觀、產地與用途了嗎？</h3>
-                    <p class="text-sm text-slate-300">立刻進入「地質實驗室：密室逃脫挑戰」，破解 5 道電子密碼鎖，把成績傳送給老師吧！</p>
-                </div>
-                <button onclick="switchMode('escape')" class="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base shadow-lg transition transform hover:scale-105 shrink-0">
-                    🔐 開始密室逃脫挑戰
-                </button>
             </div>
         </section>
 
         <!-- =========================================================
-             模式二：【地質實驗室：密室逃脫挑戰】
+             模式二：【🔐 地質密室逃脫（限時挑戰）】
              ========================================================= -->
         <section id="mode-escape" class="hidden space-y-6">
 
-            <!-- 步驟 1：學生登入卡片 -->
-            <div id="escape-login-card" class="max-w-2xl mx-auto bg-[#0F1624] rounded-3xl p-6 sm:p-8 border-2 border-amber-500/40 shadow-2xl space-y-6">
+            <!-- 階段 A：探險員登入畫面 -->
+            <div id="escape-login-view" class="max-w-2xl mx-auto bg-[#0E1525] rounded-3xl p-6 sm:p-8 border-2 border-amber-500/40 shadow-2xl space-y-6">
                 <div class="text-center space-y-2.5">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-amber-500/15 border border-amber-400/50 flex items-center justify-center text-3xl">
-                        🔐
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-rose-500/15 border border-rose-400/50 flex items-center justify-center text-3xl shadow-lg">
+                        🚨
                     </div>
-                    <span class="inline-block px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-bold">
-                        緊急警報 • 地質實驗室電子門反鎖中
+                    <span class="inline-block px-3.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-black tracking-wider">
+                        緊急封鎖警報 • 每題嚴格限時 2 分鐘
                     </span>
-                    <h2 class="text-2xl sm:text-3xl font-black text-white">地質實驗室：密室逃脫</h2>
+                    <h2 class="text-2xl sm:text-3xl font-black text-white">地質實驗室：限時密室逃脫</h2>
                     <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                        你被困在地下岩石標本室了！必須運用對<strong class="text-amber-300">臺灣 10 種常見岩石</strong>的知識，連續破解 <strong class="text-teal-300">5 道電子密碼鎖（每題 20 分，滿分 100 分）</strong>，才能解開大門並登錄通關成績！
+                        實驗室五道安全電子門已反鎖！你必須親自輸入正確密碼解除每一道鎖（<strong class="text-amber-300">每題限時 02:00，時間歸零即任務失敗，必須從第 1 關重來！</strong>）。
                     </p>
                 </div>
 
-                <!-- 學生資料輸入框 -->
-                <div class="bg-[#162035] p-5 rounded-2xl border border-slate-700 space-y-4">
+                <!-- 學生基本資料防呆表單 -->
+                <div class="bg-[#152036] p-5 rounded-2xl border border-slate-700 space-y-4">
                     <h3 class="font-bold text-amber-300 text-sm sm:text-base flex items-center gap-2">
-                        <span>🪪</span> <span>請登記探險員資料（過關後將自動送出成績）</span>
+                        <span>🪪</span> <span>請登記探險員資料（成績將自動傳送給老師）</span>
                     </h3>
-
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-300 mb-1.5">班級 *</label>
-                            <input type="text" id="input-class" list="class-presets" value="六年甲班" placeholder="如：六年甲班" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-white font-bold focus:border-amber-400 outline-none">
-                            <datalist id="class-presets">
+                            <input type="text" id="stu-class" list="class-list" placeholder="如：六年甲班" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-white font-bold focus:border-amber-400 outline-none">
+                            <datalist id="class-list">
                                 <option value="六年甲班">
                                 <option value="六年乙班">
                                 <option value="六年丙班">
                                 <option value="六年丁班">
-                                <option value="六年戊班">
-                                <option value="六年己班">
                                 <option value="601班">
                                 <option value="602班">
                                 <option value="603班">
                                 <option value="604班">
-                                <option value="605班">
                             </datalist>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-300 mb-1.5">座號 *</label>
-                            <input type="number" id="input-seat" min="1" max="60" placeholder="例如：15" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-white font-bold focus:border-amber-400 outline-none">
+                            <input type="number" id="stu-seat" min="1" max="60" placeholder="例如：12" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-white font-bold focus:border-amber-400 outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-300 mb-1.5">姓名 *</label>
-                            <input type="text" id="input-name" placeholder="請輸入真實姓名" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-white font-bold focus:border-amber-400 outline-none">
+                            <input type="text" id="stu-name" placeholder="請輸入真實姓名" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-white font-bold focus:border-amber-400 outline-none">
                         </div>
                     </div>
 
-                    <!-- Google Sheet 連線狀態顯示 -->
-                    <div id="sheet-conn-status" class="px-3.5 py-2.5 rounded-xl text-xs flex items-center justify-between bg-amber-500/10 border border-amber-500/30 text-amber-200">
-                        <span id="sheet-conn-msg">⏳ 正在檢查成績表單連線...</span>
+                    <!-- 規則重點提示框 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700/80 text-slate-300">
+                            <strong class="text-rose-400 block mb-0.5">⏱️ 每題限時 2 分鐘</strong>
+                            剩 15 秒響起警報，超時直接封鎖失敗重來！
+                        </div>
+                        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700/80 text-slate-300">
+                            <strong class="text-amber-300 block mb-0.5">🔐 自行輸入密碼鎖</strong>
+                            每關滿分 20 分，答錯震動扣 3 分，解鎖才能前進。
+                        </div>
+                        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700/80 text-slate-300">
+                            <strong class="text-teal-300 block mb-0.5">📖 隨身岩石圖鑑</strong>
+                            忘記線索時，隨時可打開圖鑑抽屜查詢！
+                        </div>
+                    </div>
+
+                    <!-- Google Sheet 連線狀態列 -->
+                    <div id="login-sheet-status" class="px-3.5 py-2.5 rounded-xl text-xs flex items-center justify-between bg-amber-500/10 border border-amber-500/30 text-amber-200">
+                        <span id="login-sheet-text">⏳ 正在檢查 Google Sheet 成績表單連線...</span>
                         <button onclick="openTeacherModal()" class="underline font-bold text-amber-300 hover:text-white">設定表單</button>
                     </div>
                 </div>
 
-                <button onclick="beginEscapeChallenge()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-lg shadow-xl transition transform hover:scale-[1.01]">
-                    🔓 啟動密碼鎖・開始密室逃脫！
+                <button onclick="startEscapeGame()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-lg shadow-xl transition transform hover:scale-[1.01]">
+                    🚨 進入密室・啟動 2 分鐘倒數計時！
                 </button>
             </div>
 
-            <!-- 步驟 2：密室逃脫闖關進行中 -->
-            <div id="escape-game-board" class="hidden space-y-5">
-                <!-- 頂部闖關狀態列 -->
-                <div class="bg-[#0F1624] rounded-2xl p-4 border border-slate-700/80 flex flex-wrap items-center justify-between gap-4 shadow-lg">
-                    <div class="flex items-center gap-3">
-                        <span id="hud-player" class="px-3 py-1 rounded-lg bg-teal-600/30 border border-teal-500/50 text-teal-200 text-xs sm:text-sm font-bold">六年甲班 1號</span>
-                        <span class="text-sm text-slate-300">關卡進度：<strong id="hud-level" class="text-amber-400 text-base">第 1 / 5 關</strong></span>
+            <!-- 階段 B：密室逃脫闖關主畫面 (含 02:00 緊張倒數計時器與密碼鎖介面) -->
+            <div id="escape-play-view" class="hidden space-y-4">
+
+                <!-- 頂部高壓倒數計時與狀態 HUD -->
+                <div id="escape-hud-bar" class="bg-[#0E1525] rounded-2xl p-4 border-2 border-slate-700 shadow-2xl space-y-3 transition-colors">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <!-- 探險員與關卡進度 -->
+                        <div class="flex flex-wrap items-center gap-2.5">
+                            <span id="hud-stu-badge" class="px-3 py-1 rounded-lg bg-teal-600/30 border border-teal-500/50 text-teal-200 text-xs sm:text-sm font-black">六年甲班 1號</span>
+                            <span class="text-sm font-bold text-slate-300">關卡：<strong id="hud-stage-text" class="text-amber-400 text-base">第 1 / 5 關</strong></span>
+                            <div id="hud-stage-pills" class="flex items-center gap-1.5"></div>
+                        </div>
+
+                        <!-- 中央醒目 2 分鐘倒數計時器 -->
+                        <div id="timer-box" class="px-4 py-1.5 rounded-2xl bg-slate-950 border-2 border-amber-400/70 flex items-center gap-2.5 shadow-inner">
+                            <span id="timer-icon" class="text-lg">⏱️</span>
+                            <div class="text-left">
+                                <div class="text-[10px] font-bold text-slate-400 leading-none">本關剩餘時間</div>
+                                <div id="timer-display" class="text-2xl sm:text-3xl font-black font-mono tracking-wider text-amber-300 leading-tight">02:00</div>
+                            </div>
+                        </div>
+
+                        <!-- 得分與隨身圖鑑按鈕 -->
+                        <div class="flex items-center gap-3">
+                            <div class="text-right">
+                                <div class="text-[10px] text-slate-400 font-bold">目前總分</div>
+                                <div class="text-base sm:text-lg font-black text-emerald-400"><span id="hud-score-val">0</span> / 100</div>
+                            </div>
+                            <button onclick="openHandbookDrawer()" class="px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-lg transition flex items-center gap-1.5">
+                                <span>📖</span> <span>隨身圖鑑</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- 5道密碼鎖進度燈 -->
-                    <div id="hud-lock-dots" class="flex items-center gap-2"></div>
-
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="text-sm text-slate-300">目前得分：<strong id="hud-points" class="text-emerald-400 text-lg">0</strong> / 100</div>
-                        <div class="text-sm font-mono bg-slate-900 px-3 py-1 rounded-lg border border-slate-700 text-amber-300">⏱️ <span id="hud-clock">00:00</span></div>
-                        <button onclick="openHandbookModal()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow transition flex items-center gap-1.5">
-                            <span>📖</span> <span>隨身岩石圖鑑</span>
-                        </button>
+                    <!-- 倒數視覺進度條 -->
+                    <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                        <div id="timer-progress-bar" class="h-full bg-gradient-to-r from-emerald-400 via-amber-400 to-amber-500 transition-all duration-500" style="width: 100%;"></div>
                     </div>
                 </div>
 
-                <!-- 關卡題目互動卡片 -->
-                <div id="puzzle-stage-card" class="bg-[#0F1624] rounded-3xl p-6 sm:p-8 border-2 border-slate-700/80 shadow-2xl">
-                    <!-- JS 動態載入第 1 ~ 5 關謎題 -->
+                <!-- 關卡謎題與實體密碼鎖互動區 -->
+                <div id="puzzle-container" class="bg-[#0E1525] rounded-3xl p-5 sm:p-8 border-2 border-slate-700/90 shadow-2xl">
+                    <!-- JS 動態載入第 1 ~ 5 關謎題與觸控密碼鎖 -->
                 </div>
             </div>
 
-            <!-- 步驟 3：逃脫成功通關證書與成績傳送結果 -->
-            <div id="escape-victory-card" class="hidden max-w-3xl mx-auto bg-[#0F1624] rounded-3xl p-6 sm:p-8 border-4 border-amber-400/80 shadow-2xl space-y-6">
-                <div class="text-center space-y-2">
-                    <span class="inline-block px-4 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-sm font-black">
-                        🎉 5 道電子鎖全數解除・成功逃出實驗室！
-                    </span>
-                    <h2 class="text-3xl font-black text-white">地質探險家通關證書</h2>
-                    <p id="vic-student" class="text-amber-300 font-bold text-base">六年甲班 15號 王小明</p>
+            <!-- 階段 C：震撼失敗畫面 (時間歸零・實驗室全面封鎖) -->
+            <div id="escape-fail-view" class="hidden max-w-3xl mx-auto lockdown-bg rounded-3xl p-6 sm:p-10 border-4 border-rose-600 shadow-[0_0_60px_rgba(225,29,72,0.55)] text-center space-y-6">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-600/30 border border-rose-400 text-rose-200 text-xs sm:text-sm font-black tracking-widest animate-pulse">
+                    <span>🚨 CRITICAL LOCKDOWN • 倒數時間歸零</span>
                 </div>
 
-                <!-- 成績數據面板 -->
-                <div class="grid grid-cols-3 gap-3 sm:gap-4 bg-[#162035] p-5 rounded-2xl border border-slate-700 text-center">
+                <div class="space-y-2">
+                    <div class="text-6xl sm:text-7xl">🔒</div>
+                    <h2 class="glitch-title text-3xl sm:text-5xl font-black text-rose-500 tracking-wider">
+                        實驗室全面封鎖！逃脫失敗
+                    </h2>
+                    <p id="fail-subtitle" class="text-base sm:text-lg text-rose-200 font-bold">
+                        警報響起！你未能在 2 分鐘內解開第 1 關電子密碼鎖，厚重的防爆合金門已永久鎖死！
+                    </p>
+                </div>
+
+                <!-- 失敗陣亡統計卡片 -->
+                <div class="bg-black/60 backdrop-blur-md rounded-2xl p-5 border border-rose-500/40 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                     <div>
-                        <div class="text-xs font-bold text-slate-400">最終總分</div>
-                        <div class="text-3xl sm:text-4xl font-black text-emerald-400 mt-1"><span id="vic-score">100</span><span class="text-sm text-slate-400 ml-0.5">分</span></div>
+                        <div class="text-xs text-rose-300 font-bold">探險員</div>
+                        <div id="fail-stu-info" class="text-base sm:text-lg font-black text-white mt-1">六年甲班 1號</div>
+                    </div>
+                    <div class="sm:border-x border-rose-500/30">
+                        <div class="text-xs text-rose-300 font-bold">止步關卡</div>
+                        <div id="fail-stage-info" class="text-base sm:text-lg font-black text-rose-400 mt-1">第 1 / 5 關（超時）</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-rose-300 font-bold">失敗前累計得分</div>
+                        <div id="fail-score-info" class="text-base sm:text-lg font-black text-amber-300 mt-1">0 分</div>
+                    </div>
+                </div>
+
+                <!-- Google Sheet 失敗紀錄自動回報狀態 -->
+                <div id="fail-sheet-banner" class="p-3.5 rounded-2xl bg-black/50 border border-rose-500/30 text-xs sm:text-sm text-rose-200 font-bold">
+                    ⏳ 正在回報本次挑戰紀錄...
+                </div>
+
+                <div class="pt-2 flex flex-wrap justify-center gap-4">
+                    <button onclick="restartFromBeginning()" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-500 hover:from-rose-500 hover:to-red-400 text-white font-black text-lg shadow-[0_0_25px_rgba(244,63,94,0.6)] transition transform hover:scale-105">
+                        🔄 重新挑戰（從第 1 關重來）
+                    </button>
+                    <button onclick="switchMode('museum')" class="px-6 py-4 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-bold border border-slate-600 transition">
+                        🏛️ 先回岩石探索館複習
+                    </button>
+                </div>
+            </div>
+
+            <!-- 階段 D：榮耀通關勝利畫面 (金色光芒 + 彩帶特效 + 成績單傳送) -->
+            <div id="escape-victory-view" class="hidden max-w-3xl mx-auto victory-rays rounded-3xl p-6 sm:p-10 border-4 border-amber-400 shadow-[0_0_65px_rgba(245,158,11,0.45)] space-y-6">
+                <div class="text-center space-y-2.5">
+                    <span class="inline-block px-4 py-1.5 rounded-full bg-emerald-500/25 border border-emerald-400 text-emerald-300 text-xs sm:text-sm font-black tracking-wider">
+                        ✨ SECURITY OVERRIDE • 5 道電子密碼鎖全數解除！
+                    </span>
+                    <div class="text-5xl sm:text-6xl">🏆</div>
+                    <h2 class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-yellow-200">
+                        密室逃脫成功！榮耀地質大師
+                    </h2>
+                    <p id="vic-stu-info" class="text-amber-300 font-black text-lg">六年甲班 12號 王小明</p>
+                </div>
+
+                <!-- 成績結算數據框 -->
+                <div class="grid grid-cols-3 gap-3 sm:gap-4 bg-[#111A2E]/90 p-5 rounded-2xl border border-amber-400/40 text-center shadow-inner">
+                    <div>
+                        <div class="text-xs font-bold text-slate-400">最終逃脫總分</div>
+                        <div class="text-3xl sm:text-4xl font-black text-emerald-400 mt-1"><span id="vic-total-score">100</span><span class="text-sm text-slate-400 ml-0.5">分</span></div>
                     </div>
                     <div class="border-x border-slate-700">
-                        <div class="text-xs font-bold text-slate-400">答對關卡 / 耗時</div>
-                        <div class="text-lg sm:text-2xl font-black text-white mt-1.5"><span id="vic-correct">5/5</span> • <span id="vic-time" class="text-amber-300">01:45</span></div>
+                        <div class="text-xs font-bold text-slate-400">通關進度 / 總耗時</div>
+                        <div class="text-lg sm:text-2xl font-black text-white mt-1.5">5/5 關 • <span id="vic-total-time" class="text-amber-300">02:18</span></div>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-slate-400">地質稱號</div>
-                        <div id="vic-title" class="text-base sm:text-xl font-black text-amber-400 mt-2">👑 傳說級地質大師</div>
+                        <div class="text-xs font-bold text-slate-400">獲得地質勳章</div>
+                        <div id="vic-rank-badge" class="text-base sm:text-xl font-black text-amber-400 mt-2">👑 傳說地質大師</div>
                     </div>
                 </div>
 
-                <!-- Google Sheet 傳送狀態框 -->
-                <div id="sheet-submit-banner" class="p-4 rounded-2xl border text-sm font-bold flex flex-col sm:flex-row items-center justify-between gap-3 bg-teal-900/40 border-teal-500/50 text-teal-200">
+                <!-- Google Sheet 成績送出狀態横幅 -->
+                <div id="vic-sheet-banner" class="p-4 rounded-2xl border text-sm font-bold flex flex-col sm:flex-row items-center justify-between gap-3 bg-teal-900/40 border-teal-500/50 text-teal-200">
                     <div class="flex items-center gap-2.5">
-                        <span id="sheet-submit-icon" class="text-xl">📤</span>
-                        <span id="sheet-submit-msg">正在將成績傳送至老師的 Google Sheet 表單...</span>
+                        <span id="vic-sheet-icon" class="text-xl">📤</span>
+                        <span id="vic-sheet-msg">正在將通關成績自動傳送至老師的 Google Sheet 表單...</span>
                     </div>
-                    <button id="btn-resend" onclick="sendResultToGoogleSheet(true)" class="hidden px-3.5 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-black text-xs hover:bg-amber-400">
+                    <button id="vic-retry-btn" onclick="submitScoreToSheet(true)" class="hidden px-4 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-black text-xs hover:bg-amber-400">
                         重新傳送
                     </button>
                 </div>
 
-                <!-- 5 道關卡詳細解析回顧 -->
-                <div class="space-y-3">
-                    <h3 class="font-black text-amber-300 text-base sm:text-lg">📋 各關卡解鎖與地質解析回顧</h3>
-                    <div id="vic-review-list" class="space-y-2.5"></div>
+                <!-- 各關卡解鎖明細與地質解析 -->
+                <div class="space-y-2.5">
+                    <h3 class="font-black text-amber-300 text-base">📋 5 道密碼鎖解鎖明細與知識解析</h3>
+                    <div id="vic-details-list" class="space-y-2"></div>
                 </div>
 
                 <div class="flex flex-wrap justify-center gap-3 pt-4 border-t border-slate-800">
-                    <button onclick="restartEscape()" class="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold border border-slate-600 transition">
-                        🔄 重新挑戰一次
+                    <button onclick="restartFromBeginning()" class="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold border border-slate-600 transition">
+                        🔄 再次挑戰刷新紀錄
                     </button>
                     <button onclick="switchMode('museum')" class="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black transition">
-                        🏛️ 返回岩石學習圖鑑
+                        🏛️ 返回岩石探索館
                     </button>
                 </div>
             </div>
@@ -420,81 +533,81 @@
     </main>
 
     <!-- =========================================================
-         彈窗 1：隨身岩石圖鑑速查表 (密室逃脫中隨時可開啟)
+         抽屜彈窗 1：📖 隨身岩石圖鑑（密室闖關中隨時開啟查詢）
          ========================================================= -->
-    <div id="modal-handbook" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-[#0F1624] rounded-3xl max-w-4xl w-full max-h-[88vh] flex flex-col border-2 border-amber-400/70 shadow-2xl overflow-hidden">
-            <div class="bg-[#162035] px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+    <div id="drawer-handbook" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex justify-end">
+        <div class="bg-[#0E1525] w-full max-w-2xl h-full flex flex-col border-l-2 border-amber-400/70 shadow-2xl">
+            <div class="bg-[#152036] px-6 py-4 border-b border-slate-700 flex items-center justify-between">
                 <div class="flex items-center gap-2.5">
                     <span class="text-xl">📖</span>
-                    <h3 class="font-black text-lg text-amber-300">隨身岩石圖鑑速查表（10種岩石完整資料）</h3>
+                    <div>
+                        <h3 class="font-black text-lg text-amber-300">隨身岩石圖鑑（10種岩石速查）</h3>
+                        <p class="text-xs text-slate-400">注意：查閱圖鑑時，2 分鐘倒數計時仍會繼續進行喔！</p>
+                    </div>
                 </div>
-                <button onclick="closeHandbookModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-rose-600 text-white font-bold flex items-center justify-center transition">✕</button>
+                <button onclick="closeHandbookDrawer()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-rose-600 text-white font-bold flex items-center justify-center transition">✕</button>
             </div>
-            <div id="handbook-body" class="p-5 overflow-y-auto space-y-3">
-                <!-- JS 動態渲染 10 種岩石完整速查卡片 -->
+            <div id="handbook-list" class="p-5 overflow-y-auto space-y-3 flex-1">
+                <!-- JS 動態生成 10 種岩石速查卡片 -->
             </div>
         </div>
     </div>
 
     <!-- =========================================================
-         彈窗 2：教師/成績表單設定 (Google Sheets 連動)
+         彈窗 2：⚙️ 教師/成績表單設定（Google Sheets 連動）
          ========================================================= -->
     <div id="modal-teacher" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-[#0F1624] rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col border-2 border-amber-500/60 shadow-2xl overflow-hidden text-slate-200">
-            <div class="bg-[#162035] px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <div class="bg-[#0E1525] rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col border-2 border-amber-500/60 shadow-2xl overflow-hidden text-slate-200">
+            <div class="bg-[#152036] px-6 py-4 border-b border-slate-700 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <span class="text-xl">⚙️</span>
-                    <h3 class="font-black text-lg text-amber-300">教師/成績表單設定（Google Sheets 連動）</h3>
+                    <h3 class="font-black text-lg text-amber-300">教師/成績表單設定（Google Sheets 成績收集）</h3>
                 </div>
                 <button onclick="closeTeacherModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-rose-600 text-white font-bold flex items-center justify-center transition">✕</button>
             </div>
 
             <div class="p-6 overflow-y-auto space-y-5 text-sm">
-                <!-- 步驟 1：填入部署後的 /exec 網址 -->
-                <div class="bg-[#162035] p-4 rounded-2xl border border-amber-500/30 space-y-3">
+                <!-- 設定 Apps Script 網址與產生學生專屬連結 -->
+                <div class="bg-[#152036] p-4 rounded-2xl border border-amber-500/30 space-y-3">
                     <label class="block font-black text-amber-300 text-base">
                         1️⃣ 貼入 Google Apps Script 網頁應用程式網址（結尾為 /exec）：
                     </label>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <input type="url" id="teacher-gas-input" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-emerald-300 font-mono text-xs focus:border-amber-400 outline-none">
-                        <button onclick="saveTeacherGasUrl()" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black shrink-0">💾 儲存網址</button>
+                        <input type="url" id="gas-url-field" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-600 text-emerald-300 font-mono text-xs focus:border-amber-400 outline-none">
+                        <button onclick="saveGasUrl()" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black shrink-0">💾 儲存網址</button>
                     </div>
                     <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-                        <button onclick="sendTestRowToSheet()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-teal-300 font-bold text-xs">
-                            🧪 發送一筆測試資料至 Google Sheet
+                        <button onclick="testGasConnection()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-teal-300 font-bold text-xs">
+                            🧪 發送測試資料到 Google Sheet
                         </button>
-                        <button onclick="copyStudentAutoLink()" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-black text-xs shadow">
+                        <button onclick="copyStudentShareLink()" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-black text-xs shadow">
                             🔗 複製「學生專屬連線網址 (?sheetUrl=...)」
                         </button>
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed">
-                        💡 <strong>派發給學生超簡單：</strong>儲存網址後，點擊右側綠色按鈕「複製學生專屬連線網址」，貼到 Google Classroom 或班級群組，學生點開就會自動綁定您的試算表，免手動設定！
+                        💡 <strong>老師派發小撇步：</strong>儲存網址後，點擊「複製學生專屬連線網址」貼到 Google Classroom，學生點開網址就會自動靜默綁定您的試算表！
                     </p>
                 </div>
 
-                <!-- 步驟 2：Google Apps Script 後端程式碼 (同時包含 doGet 與 doPost) -->
+                <!-- 附贈後端 Apps Script 程式碼 -->
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="font-black text-white">2️⃣ Google 試算表 Apps Script 程式碼（程式碼.gs，含 doGet 與 doPost）：</span>
-                        <button onclick="copyAppsScriptCode()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 text-xs font-bold">
+                        <button onclick="copyGasCode()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 text-xs font-bold">
                             📋 一鍵複製程式碼
                         </button>
                     </div>
-                    <textarea id="apps-script-box" readonly rows="11" class="w-full p-3.5 rounded-2xl bg-slate-950 text-emerald-300 font-mono text-xs border border-slate-800 leading-relaxed outline-none">function doGet(e) {
+                    <textarea id="gas-code-template" readonly rows="10" class="w-full p-3.5 rounded-2xl bg-slate-950 text-emerald-300 font-mono text-xs border border-slate-800 leading-relaxed outline-none">function doGet(e) {
   return ContentService.createTextOutput("✅ 岩石密室逃脫成績收集服務運作正常！請從教學網頁提交成績。")
     .setMimeType(ContentService.MimeType.TEXT);
 }
 
 function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(["提交時間", "班級", "座號", "姓名", "總分", "答對題數", "通關耗時", "答題明細"]);
   }
-  
   var data = JSON.parse(e.postData.contents);
-  
   sheet.appendRow([
     new Date(),
     data.className || "",
@@ -505,24 +618,20 @@ function doPost(e) {
     data.timeSpent || "",
     data.details || ""
   ]);
-  
   return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
     .setMimeType(ContentService.MimeType.JSON);
 }</textarea>
-                    <p class="text-xs text-slate-400">
-                        ※ 部署提醒：在 Google 試算表「擴充功能 → Apps Script」貼上程式碼後，點「部署 → 新增部署作業 → 網頁應用程式」，執行身分選「我」，誰可以存取設為「<strong>所有人</strong>」。
-                    </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 剪貼簿複製輔助欄位 -->
-    <textarea id="copy-buffer" class="fixed -top-96 left-0 opacity-0 pointer-events-none"></textarea>
+    <!-- 隱藏剪貼簿緩衝區 -->
+    <textarea id="clipboard-helper" class="fixed -top-96 left-0 opacity-0 pointer-events-none"></textarea>
 
     <script>
         // =========================================================
-        // 1. 完整 10 種岩石資料庫 (指定對應 images/*.png 實體標本照路徑)
+        // 1. 完整 10 種岩石資料庫 (ROCKS_DB) - 完全符合指定教學內容
         // =========================================================
         const ROCKS_DB = [
             {
@@ -611,7 +720,7 @@ function doPost(e) {
                 name: '片麻岩',
                 category: '變質岩',
                 img: 'images/gneiss.png',
-                appearance: '呈白色、灰色或肉紅色。呈黑白兩色或暗淡兩色相間隔，形成平行的條紋狀排列，稱為片麻岩理。',
+                appearance: '呈白色、灰色或肉紅色。呈黑白兩色或暗淡兩色相間間隔，形成平行的條紋狀排列，稱為片麻岩理。',
                 origin: '臺灣的片麻岩主要分布在宜蘭縣蘇澳鎮到花蓮縣秀林鄉的蘇花公路沿線與附近山區。',
                 uses: '可做建築和鋪路的材料。'
             },
@@ -628,734 +737,1046 @@ function doPost(e) {
         ];
 
         // =========================================================
-        // 2. 智慧圖片載入 + 高擬真備援 SVG 引擎 (若 .png 尚未上傳也不破圖)
+        // 2. 圖片載入與精美 SVG 備援機制 (若 .png 尚未上傳也不破圖)
         // =========================================================
-        const missingImagesSet = new Set();
+        const brokenImageIds = new Set();
 
-        function buildFallbackRockSVG(rockId) {
-            switch (rockId) {
-                case 'andesite':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.85)]">
-                        <polygon points="116,24 188,68 212,126 162,186 84,196 36,142 54,72" fill="#374151" stroke="#64748B" stroke-width="2"/>
-                        <g fill="#F8FAFC" opacity="0.9"><polygon points="94,62 103,58 106,67 96,69"/><polygon points="134,76 144,72 142,83 132,82"/><polygon points="75,104 85,100 88,110 77,112"/><polygon points="114,122 125,117 128,128 116,130"/><polygon points="154,108 165,103 167,113 156,115"/></g>
-                        <g fill="#090D16"><rect x="108" y="84" width="9" height="5" rx="1"/><rect x="86" y="128" width="10" height="6" rx="1"/><rect x="138" y="128" width="10" height="5" rx="1"/></g>
-                    </svg>`;
-                case 'granite':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.85)]">
-                        <polygon points="135,26 196,64 206,135 152,186 92,198 44,136 56,74" fill="#C98874"/>
-                        <g opacity="0.88"><polygon points="112,56 128,50 132,66 114,68" fill="#F7D5CA"/><polygon points="148,74 166,68 168,85 150,88" fill="#ECE7E4"/><polygon points="104,92 122,88 124,104 106,106" fill="#DC8974"/><polygon points="134,116 154,110 156,128 136,130" fill="#F5EFEA"/></g>
-                        <g fill="#1C1615"><circle cx="126" cy="76" r="4"/><circle cx="144" cy="96" r="4.5"/><circle cx="118" cy="122" r="4"/><circle cx="164" cy="134" r="5"/></g>
-                    </svg>`;
-                case 'basalt':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.9)]">
-                        <polygon points="56,50 138,42 188,60 184,168 134,186 52,182" fill="#262220" stroke="#44403C" stroke-width="2"/>
-                        <polygon points="138,42 188,60 184,168 134,186" fill="#171412" opacity="0.72"/>
-                    </svg>`;
-                case 'limestone':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.85)]">
-                        <path d="M118,34 C156,34 196,86 196,132 C196,174 162,190 118,190 C72,190 42,172 44,132 C46,88 82,34 118,34 Z" fill="#9B9182"/>
-                        <g fill="#3E372E" opacity="0.75"><circle cx="96" cy="96" r="4.5"/><circle cx="136" cy="88" r="3.5"/><circle cx="158" cy="118" r="5"/><circle cx="84" cy="134" r="4"/></g>
-                    </svg>`;
-                case 'shale':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.85)]">
-                        <polygon points="36,112 114,134 204,116 186,158 110,174 44,148" fill="#334155"/>
-                        <polygon points="106,68 182,84 204,116 114,134 36,112 52,86" fill="#64748B" stroke="#CBD5E1" stroke-width="1"/>
-                        <g stroke="#CBD5E1" stroke-width="1.4" opacity="0.65" fill="none"><path d="M40,122 L114,142 L198,125"/><path d="M42,132 L113,152 L194,135"/><path d="M44,142 L111,162 L188,146"/></g>
-                    </svg>`;
-                case 'sandstone':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.85)]">
-                        <polygon points="116,28 178,56 196,116 174,178 114,198 62,172 48,108 72,52" fill="#B59E7D"/>
-                        <g fill="#594A36" opacity="0.65"><circle cx="88" cy="78" r="1.6"/><circle cx="104" cy="68" r="1.6"/><circle cx="122" cy="84" r="1.6"/><circle cx="76" cy="108" r="1.6"/><circle cx="98" cy="116" r="1.6"/><circle cx="118" cy="112" r="1.6"/><circle cx="134" cy="126" r="1.6"/><circle cx="84" cy="142" r="1.6"/></g>
-                    </svg>`;
-                case 'marble':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.85)]">
-                        <rect x="52" y="54" width="136" height="132" rx="16" fill="#48615B" stroke="#94A3B8" stroke-width="1.5"/>
-                        <path d="M56,92 Q96,74 128,104 T184,88" stroke="#E2E8F0" stroke-width="6" fill="none" opacity="0.7" stroke-linecap="round"/>
-                        <path d="M58,136 Q104,154 136,122 T184,144" stroke="#F8FAFC" stroke-width="4.5" fill="none" opacity="0.6" stroke-linecap="round"/>
-                    </svg>`;
-                case 'slate':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.9)]">
-                        <polygon points="34,114 134,142 206,112 202,144 134,174 38,142" fill="#23262C"/>
-                        <polygon points="112,78 206,112 134,142 34,114" fill="#4B5563" stroke="#9CA3AF" stroke-width="1.2"/>
-                    </svg>`;
-                case 'gneiss':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.85)]">
-                        <defs><clipPath id="cg"><polygon points="116,32 184,64 204,132 164,186 92,192 42,144 54,74"/></clipPath></defs>
-                        <g clip-path="url(#cg)">
-                            <rect x="30" y="25" width="185" height="175" fill="#9CA3AF"/>
-                            <path d="M25,60 Q115,50 215,66" stroke="#1F2937" stroke-width="14" fill="none"/>
-                            <path d="M25,84 Q115,74 215,90" stroke="#F3F4F6" stroke-width="12" fill="none"/>
-                            <path d="M25,108 Q115,98 215,114" stroke="#1F2937" stroke-width="15" fill="none"/>
-                            <path d="M25,134 Q115,124 215,140" stroke="#E5E7EB" stroke-width="12" fill="none"/>
-                            <path d="M25,160 Q115,150 215,166" stroke="#111827" stroke-width="15" fill="none"/>
-                        </g>
-                    </svg>`;
-                case 'schist':
-                    return `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_16px_16px_rgba(0,0,0,0.85)]">
-                        <path d="M74,44 L168,48 L192,172 L174,186 L62,184 L52,162 Z" fill="#587C73" stroke="#9BBAB2" stroke-width="1.5"/>
-                        <path d="M58,82 Q105,74 176,86" stroke="#CBDAD5" stroke-width="5" fill="none" opacity="0.6"/>
-                        <path d="M56,118 Q110,128 182,114" stroke="#2D423D" stroke-width="6" fill="none" opacity="0.6"/>
-                        <path d="M56,152 Q105,144 186,156" stroke="#DCE8E4" stroke-width="5" fill="none" opacity="0.6"/>
-                    </svg>`;
+        function createFallbackSVG(rockId) {
+            const svgs = {
+                andesite: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.85)]"><polygon points="116,24 188,68 212,126 162,186 84,196 36,142 54,72" fill="#374151" stroke="#64748B" stroke-width="2"/><g fill="#F8FAFC" opacity="0.9"><polygon points="94,62 103,58 106,67 96,69"/><polygon points="134,76 144,72 142,83 132,82"/><polygon points="75,104 85,100 88,110 77,112"/><polygon points="114,122 125,117 128,128 116,130"/><polygon points="154,108 165,103 167,113 156,115"/></g></svg>`,
+                granite: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.85)]"><polygon points="135,26 196,64 206,135 152,186 92,198 44,136 56,74" fill="#C98874"/><g opacity="0.88"><polygon points="112,56 128,50 132,66 114,68" fill="#F7D5CA"/><polygon points="148,74 166,68 168,85 150,88" fill="#ECE7E4"/><polygon points="134,116 154,110 156,128 136,130" fill="#F5EFEA"/></g><g fill="#1C1615"><circle cx="126" cy="76" r="4"/><circle cx="144" cy="96" r="4.5"/><circle cx="118" cy="122" r="4"/></g></svg>`,
+                basalt: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.9)]"><polygon points="56,50 138,42 188,60 184,168 134,186 52,182" fill="#262220" stroke="#44403C" stroke-width="2"/><polygon points="138,42 188,60 184,168 134,186" fill="#171412" opacity="0.72"/></svg>`,
+                limestone: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.85)]"><path d="M118,34 C156,34 196,86 196,132 C196,174 162,190 118,190 C72,190 42,172 44,132 C46,88 82,34 118,34 Z" fill="#9B9182"/><g fill="#3E372E" opacity="0.75"><circle cx="96" cy="96" r="4.5"/><circle cx="136" cy="88" r="3.5"/><circle cx="158" cy="118" r="5"/></g></svg>`,
+                shale: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.85)]"><polygon points="36,112 114,134 204,116 186,158 110,174 44,148" fill="#334155"/><polygon points="106,68 182,84 204,116 114,134 36,112 52,86" fill="#64748B" stroke="#CBD5E1" stroke-width="1"/><path d="M40,122 L114,142 L198,125 M42,132 L113,152 L194,135" stroke="#CBD5E1" stroke-width="1.4" opacity="0.65" fill="none"/></svg>`,
+                sandstone: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.85)]"><polygon points="116,28 178,56 196,116 174,178 114,198 62,172 48,108 72,52" fill="#B59E7D"/><g fill="#594A36" opacity="0.65"><circle cx="88" cy="78" r="1.8"/><circle cx="122" cy="84" r="1.8"/><circle cx="98" cy="116" r="1.8"/><circle cx="134" cy="126" r="1.8"/></g></svg>`,
+                marble: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.85)]"><rect x="52" y="54" width="136" height="132" rx="16" fill="#48615B" stroke="#94A3B8" stroke-width="1.5"/><path d="M56,92 Q96,74 128,104 T184,88" stroke="#E2E8F0" stroke-width="6" fill="none" opacity="0.7" stroke-linecap="round"/><path d="M58,136 Q104,154 136,122 T184,144" stroke="#F8FAFC" stroke-width="4.5" fill="none" opacity="0.6" stroke-linecap="round"/></svg>`,
+                slate: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.9)]"><polygon points="34,114 134,142 206,112 202,144 134,174 38,142" fill="#23262C"/><polygon points="112,78 206,112 134,142 34,114" fill="#4B5563" stroke="#9CA3AF" stroke-width="1.2"/></svg>`,
+                gneiss: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.85)]"><defs><clipPath id="cg2"><polygon points="116,32 184,64 204,132 164,186 92,192 42,144 54,74"/></clipPath></defs><g clip-path="url(#cg2)"><rect x="30" y="25" width="185" height="175" fill="#9CA3AF"/><path d="M25,60 Q115,50 215,66" stroke="#1F2937" stroke-width="14" fill="none"/><path d="M25,84 Q115,74 215,90" stroke="#F3F4F6" stroke-width="12" fill="none"/><path d="M25,108 Q115,98 215,114" stroke="#1F2937" stroke-width="15" fill="none"/><path d="M25,134 Q115,124 215,140" stroke="#E5E7EB" stroke-width="12" fill="none"/></g></svg>`,
+                schist: `<svg viewBox="0 0 240 240" class="w-full h-full drop-shadow-[0_14px_14px_rgba(0,0,0,0.85)]"><path d="M74,44 L168,48 L192,172 L174,186 L62,184 L52,162 Z" fill="#587C73" stroke="#9BBAB2" stroke-width="1.5"/><path d="M58,82 Q105,74 176,86" stroke="#CBDAD5" stroke-width="5" fill="none" opacity="0.6"/><path d="M56,118 Q110,128 182,114" stroke="#2D423D" stroke-width="6" fill="none" opacity="0.6"/></svg>`
+            };
+            return svgs[rockId] || svgs.andesite;
+        }
+
+        function onImgLoadError(imgEl, rockId) {
+            brokenImageIds.add(rockId);
+            if (imgEl && imgEl.parentElement) {
+                imgEl.parentElement.innerHTML = createFallbackSVG(rockId);
             }
         }
 
-        function handleSpecimenImgError(imgEl, rockId) {
-            missingImagesSet.add(rockId);
-            const parent = imgEl.parentElement;
-            if (parent) {
-                parent.innerHTML = buildFallbackRockSVG(rockId);
+        function buildSpecimenVisualHTML(rock, angleDeg = 0) {
+            const rad = angleDeg * Math.PI / 180;
+            const scaleX = 0.85 + 0.15 * Math.cos(rad);
+            const tiltZ = Math.sin(rad) * 9;
+            const styleStr = `transform: scaleX(${scaleX.toFixed(3)}) rotate(${tiltZ.toFixed(2)}deg); transition: transform 0.08s linear;`;
+
+            if (brokenImageIds.has(rock.id)) {
+                return `<div class="w-full h-full flex items-center justify-center" style="${styleStr}">${createFallbackSVG(rock.id)}</div>`;
             }
-        }
-
-        function renderSpecimenMedia(rock, angle = 0, zoom = 1) {
-            const rad = angle * Math.PI / 180;
-            const scaleX = (0.86 + 0.14 * Math.cos(rad)) * zoom;
-            const scaleY = zoom;
-            const tiltZ = Math.sin(rad) * 10;
-            const transformCSS = `transform: scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)}) rotate(${tiltZ.toFixed(2)}deg); transition: transform 0.08s linear;`;
-
-            if (missingImagesSet.has(rock.id)) {
-                return `<div class="w-full h-full flex items-center justify-center" style="${transformCSS}">${buildFallbackRockSVG(rock.id)}</div>`;
-            }
-
             return `
-                <div class="w-full h-full flex items-center justify-center" style="${transformCSS}">
-                    <img src="${rock.img}" alt="${rock.name}標本" onerror="handleSpecimenImgError(this, '${rock.id}')" class="w-full h-full object-contain drop-shadow-[0_18px_20px_rgba(0,0,0,0.88)] select-none pointer-events-none">
+                <div class="w-full h-full flex items-center justify-center" style="${styleStr}">
+                    <img src="${rock.img}" alt="${rock.name}標本" onerror="onImgLoadError(this, '${rock.id}')" class="w-full h-full object-contain drop-shadow-[0_18px_20px_rgba(0,0,0,0.88)] select-none pointer-events-none">
                 </div>
             `;
         }
 
         // =========================================================
-        // 3. 岩石學習圖鑑互動邏輯 (拖曳、滑桿、鍵盤 ← →、語音朗讀)
+        // 3. 岩石探索館（自主學習模式）互動控制
         // =========================================================
-        let activeRockIndex = 0;
-        let activeCategoryFilter = 'all';
-        let isAutoSpinning = true;
-        let currentSpinDeg = 0;
-        let currentZoom = 1.0;
-        let spinTimer = null;
-        let draggingSpecimen = false;
-        let lastPointerX = 0;
+        let currentCategory = 'all';
+        let currentDetailIdx = 0;
+        let autoSpinEnabled = true;
+        let spinDegrees = 0;
+        let spinLoopId = null;
+        let isDraggingRock = false;
+        let dragStartX = 0;
 
-        function initMuseumView() {
-            renderSpecimenGrid();
-            loadSpecimen(0);
-            bindSpecimenInteractions();
-            startSpinLoop();
-            buildHandbookContent();
+        function initMuseum() {
+            renderGalleryCards();
+            setupStageDragAndKeys();
+            startSpinInterval();
+            renderHandbookDrawer();
         }
 
-        function renderSpecimenGrid() {
-            const grid = document.getElementById('rock-thumb-grid');
-            grid.innerHTML = '';
-            ROCKS_DB.forEach((rock, idx) => {
-                const visible = activeCategoryFilter === 'all' || rock.category === activeCategoryFilter;
-                const selected = idx === activeRockIndex;
-                const btn = document.createElement('button');
-                btn.onclick = () => loadSpecimen(idx);
-                btn.className = `p-2.5 rounded-2xl border transition-all flex flex-col items-center text-center ${
-                    selected
-                        ? 'bg-[#182338] border-amber-400 shadow-[0_0_15px_rgba(212,168,83,0.3)] scale-105'
-                        : 'bg-[#0F1624] border-slate-800 hover:border-amber-500/50'
-                } ${!visible ? 'opacity-25' : ''}`;
-                btn.innerHTML = `
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 mb-1 flex items-center justify-center">
-                        ${missingImagesSet.has(rock.id)
-                            ? buildFallbackRockSVG(rock.id)
-                            : `<img src="${rock.img}" alt="${rock.name}" onerror="handleSpecimenImgError(this, '${rock.id}')" class="w-full h-full object-contain">`
-                        }
+        function renderGalleryCards() {
+            const grid = document.getElementById('gallery-cards-grid');
+            const filtered = currentCategory === 'all'
+                ? ROCKS_DB
+                : ROCKS_DB.filter(r => r.category === currentCategory);
+
+            grid.innerHTML = filtered.map(rock => {
+                const realIdx = ROCKS_DB.findIndex(item => item.id === rock.id);
+                return `
+                    <div onclick="openSpecimenDetail(${realIdx})" class="group cursor-pointer bg-[#0E1525] hover:bg-[#152036] rounded-3xl p-4 border border-slate-800 hover:border-amber-400/80 transition-all duration-200 flex flex-col justify-between shadow-lg hover:-translate-y-1">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-mono font-bold text-slate-400">#${rock.num}</span>
+                                <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-bold">${rock.category}</span>
+                            </div>
+                            <div class="w-full aspect-square rounded-2xl specimen-stage border border-slate-800 group-hover:border-amber-500/40 p-3 flex items-center justify-center mb-3">
+                                ${brokenImageIds.has(rock.id)
+                                    ? createFallbackSVG(rock.id)
+                                    : `<img src="${rock.img}" alt="${rock.name}" onerror="onImgLoadError(this, '${rock.id}')" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">`
+                                }
+                            </div>
+                            <h3 class="text-xl font-black text-white group-hover:text-amber-300 transition mb-1">${rock.name}</h3>
+                            <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${rock.appearance}</p>
+                        </div>
+                        <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400">
+                            <span>進入展示櫃觀察</span>
+                            <span class="group-hover:translate-x-1 transition-transform">→</span>
+                        </div>
                     </div>
-                    <span class="text-xs sm:text-sm font-black text-white">${rock.name}</span>
-                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-amber-300/90 mt-0.5 font-bold">${rock.category}</span>
                 `;
-                grid.appendChild(btn);
+            }).join('');
+        }
+
+        function filterGallery(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.gal-cat-btn').forEach(btn => {
+                btn.className = btn.dataset.cat === cat
+                    ? 'gal-cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black bg-amber-500 text-slate-950'
+                    : 'gal-cat-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700';
             });
+            renderGalleryCards();
         }
 
-        function loadSpecimen(idx) {
-            activeRockIndex = idx;
-            const rock = ROCKS_DB[idx];
-            document.getElementById('spec-num').textContent = rock.num;
-            document.getElementById('spec-cat').textContent = rock.category;
-            document.getElementById('spec-img-badge').textContent = rock.img;
-            document.getElementById('spec-name').textContent = rock.name;
-            document.getElementById('spec-appearance').textContent = rock.appearance;
-            document.getElementById('spec-origin').textContent = rock.origin;
-            document.getElementById('spec-uses').textContent = rock.uses;
-
-            resetSpecimenTransform(false);
-            renderSpecimenGrid();
+        function openSpecimenDetail(idx) {
+            currentDetailIdx = idx;
+            document.getElementById('museum-grid-view').classList.add('hidden');
+            document.getElementById('museum-detail-view').classList.remove('hidden');
+            updateDetailView();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function refreshSpecimenTransform() {
-            const rock = ROCKS_DB[activeRockIndex];
-            document.getElementById('spec-canvas-wrap').innerHTML = renderSpecimenMedia(rock, currentSpinDeg, currentZoom);
-            const normalizedDeg = Math.round(((currentSpinDeg + 180) % 360 + 360) % 360 - 180);
-            document.getElementById('slider-angle').value = normalizedDeg;
-            document.getElementById('val-angle').textContent = `${normalizedDeg}°`;
-            document.getElementById('slider-zoom').value = currentZoom;
-            document.getElementById('val-zoom').textContent = `${currentZoom.toFixed(1)}x`;
+        function backToGalleryGrid() {
+            window.speechSynthesis && window.speechSynthesis.cancel();
+            document.getElementById('museum-detail-view').classList.add('hidden');
+            document.getElementById('museum-grid-view').classList.remove('hidden');
+            renderGalleryCards();
         }
 
-        function resetSpecimenTransform(refresh = true) {
-            currentSpinDeg = 0;
-            currentZoom = 1.0;
-            if (refresh) refreshSpecimenTransform();
+        function stepDetailSpecimen(delta) {
+            currentDetailIdx = (currentDetailIdx + delta + ROCKS_DB.length) % ROCKS_DB.length;
+            updateDetailView();
         }
 
-        function onManualAngleSlide(val) {
-            isAutoSpinning = false;
-            document.getElementById('spin-label').textContent = '自動旋轉：關';
-            currentSpinDeg = parseFloat(val);
-            refreshSpecimenTransform();
+        function updateDetailView() {
+            const rock = ROCKS_DB[currentDetailIdx];
+            document.getElementById('detail-counter').textContent = `${rock.num} / 10`;
+            document.getElementById('detail-num').textContent = rock.num;
+            document.getElementById('detail-cat').textContent = rock.category;
+            document.getElementById('detail-img-tag').textContent = rock.img;
+            document.getElementById('detail-name').textContent = rock.name;
+            document.getElementById('detail-appearance').textContent = rock.appearance;
+            document.getElementById('detail-origin').textContent = rock.origin;
+            document.getElementById('detail-uses').textContent = rock.uses;
+
+            spinDegrees = 0;
+            refreshDetailSpecimenSpin();
         }
 
-        function onManualZoomSlide(val) {
-            currentZoom = parseFloat(val);
-            refreshSpecimenTransform();
+        function refreshDetailSpecimenSpin() {
+            const rock = ROCKS_DB[currentDetailIdx];
+            document.getElementById('detail-specimen-holder').innerHTML = buildSpecimenVisualHTML(rock, spinDegrees);
         }
 
-        function prevSpecimen() {
-            loadSpecimen((activeRockIndex - 1 + ROCKS_DB.length) % ROCKS_DB.length);
-        }
-
-        function nextSpecimen() {
-            loadSpecimen((activeRockIndex + 1) % ROCKS_DB.length);
-        }
-
-        function setRockFilter(cat) {
-            activeCategoryFilter = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                if (btn.dataset.cat === cat) {
-                    btn.className = 'cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 text-slate-950';
-                } else {
-                    btn.className = 'cat-btn px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-800 text-slate-300 hover:bg-slate-700';
-                }
-            });
-            if (cat !== 'all' && ROCKS_DB[activeRockIndex].category !== cat) {
-                const firstIdx = ROCKS_DB.findIndex(r => r.category === cat);
-                if (firstIdx !== -1) loadSpecimen(firstIdx);
-            } else {
-                renderSpecimenGrid();
-            }
-        }
-
-        function startSpinLoop() {
-            if (spinTimer) clearInterval(spinTimer);
-            spinTimer = setInterval(() => {
-                if (isAutoSpinning && !draggingSpecimen) {
-                    currentSpinDeg = (currentSpinDeg + 2.5) % 360;
-                    refreshSpecimenTransform();
+        function startSpinInterval() {
+            if (spinLoopId) clearInterval(spinLoopId);
+            spinLoopId = setInterval(() => {
+                if (autoSpinEnabled && !isDraggingRock && !document.getElementById('museum-detail-view').classList.contains('hidden')) {
+                    spinDegrees = (spinDegrees + 2.5) % 360;
+                    refreshDetailSpecimenSpin();
                 }
             }, 60);
         }
 
         function toggleAutoSpin() {
-            isAutoSpinning = !isAutoSpinning;
-            document.getElementById('spin-label').textContent = isAutoSpinning ? '自動旋轉：開' : '自動旋轉：關';
+            autoSpinEnabled = !autoSpinEnabled;
+            document.getElementById('spin-status-label').textContent = autoSpinEnabled ? '自動旋轉：開' : '自動旋轉：關';
         }
 
-        function bindSpecimenInteractions() {
-            const box = document.getElementById('specimen-box');
+        function nudgeSpin(deg) {
+            autoSpinEnabled = false;
+            document.getElementById('spin-status-label').textContent = '自動旋轉：關';
+            spinDegrees = (spinDegrees + deg + 360) % 360;
+            refreshDetailSpecimenSpin();
+        }
+
+        function resetSpin() {
+            spinDegrees = 0;
+            refreshDetailSpecimenSpin();
+        }
+
+        function setupStageDragAndKeys() {
+            const box = document.getElementById('specimen-stage-box');
             box.addEventListener('mousedown', (e) => {
-                draggingSpecimen = true;
-                lastPointerX = e.clientX;
+                isDraggingRock = true;
+                dragStartX = e.clientX;
             });
             window.addEventListener('mousemove', (e) => {
-                if (!draggingSpecimen) return;
-                const dx = e.clientX - lastPointerX;
-                lastPointerX = e.clientX;
-                isAutoSpinning = false;
-                document.getElementById('spin-label').textContent = '自動旋轉：關';
-                currentSpinDeg = (currentSpinDeg + dx * 0.9) % 360;
-                refreshSpecimenTransform();
+                if (!isDraggingRock) return;
+                const dx = e.clientX - dragStartX;
+                dragStartX = e.clientX;
+                autoSpinEnabled = false;
+                document.getElementById('spin-status-label').textContent = '自動旋轉：關';
+                spinDegrees = (spinDegrees + dx * 0.9) % 360;
+                refreshDetailSpecimenSpin();
             });
-            window.addEventListener('mouseup', () => { draggingSpecimen = false; });
+            window.addEventListener('mouseup', () => { isDraggingRock = false; });
 
             box.addEventListener('touchstart', (e) => {
-                draggingSpecimen = true;
-                lastPointerX = e.touches[0].clientX;
+                isDraggingRock = true;
+                dragStartX = e.touches[0].clientX;
             }, { passive: true });
             box.addEventListener('touchmove', (e) => {
-                if (!draggingSpecimen) return;
-                const dx = e.touches[0].clientX - lastPointerX;
-                lastPointerX = e.touches[0].clientX;
-                isAutoSpinning = false;
-                document.getElementById('spin-label').textContent = '自動旋轉：關';
-                currentSpinDeg = (currentSpinDeg + dx * 0.9) % 360;
-                refreshSpecimenTransform();
+                if (!isDraggingRock) return;
+                const dx = e.touches[0].clientX - dragStartX;
+                dragStartX = e.touches[0].clientX;
+                autoSpinEnabled = false;
+                document.getElementById('spin-status-label').textContent = '自動旋轉：關';
+                spinDegrees = (spinDegrees + dx * 0.9) % 360;
+                refreshDetailSpecimenSpin();
             }, { passive: true });
-            box.addEventListener('touchend', () => { draggingSpecimen = false; });
+            box.addEventListener('touchend', () => { isDraggingRock = false; });
 
             window.addEventListener('keydown', (e) => {
-                if (document.getElementById('mode-museum').classList.contains('hidden')) return;
-                if (e.key === 'ArrowLeft') {
-                    isAutoSpinning = false;
-                    document.getElementById('spin-label').textContent = '自動旋轉：關';
-                    currentSpinDeg = (currentSpinDeg - 20 + 360) % 360;
-                    refreshSpecimenTransform();
-                } else if (e.key === 'ArrowRight') {
-                    isAutoSpinning = false;
-                    document.getElementById('spin-label').textContent = '自動旋轉：關';
-                    currentSpinDeg = (currentSpinDeg + 20) % 360;
-                    refreshSpecimenTransform();
-                }
+                if (document.getElementById('museum-detail-view').classList.contains('hidden')) return;
+                if (e.key === 'ArrowLeft') nudgeSpin(-22);
+                if (e.key === 'ArrowRight') nudgeSpin(22);
             });
         }
 
         // 中文語音朗讀 (Web Speech API)
-        function speakZhTW(text) {
+        function playSpeechZh(text) {
             if (!('speechSynthesis' in window)) {
-                showToast('您的瀏覽器不支援語音朗讀功能', '⚠️');
+                showToast('您的瀏覽器不支援語音導覽功能', '⚠️');
                 return;
             }
             window.speechSynthesis.cancel();
-            const msg = new SpeechSynthesisUtterance(text);
-            msg.lang = 'zh-TW';
-            msg.rate = 0.95;
-            window.speechSynthesis.speak(msg);
-            showToast('🔊 正在為您語音導覽...', '🗣️');
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'zh-TW';
+            utter.rate = 0.96;
+            window.speechSynthesis.speak(utter);
+            showToast('🔊 正在播放中文語音導覽...', '🗣️');
         }
 
-        function readFullSpecimen() {
-            const r = ROCKS_DB[activeRockIndex];
-            speakZhTW(`岩石：${r.name}。外觀：${r.appearance} 產地：${r.origin} 用途：${r.uses}`);
+        function speakFullDetail() {
+            const r = ROCKS_DB[currentDetailIdx];
+            playSpeechZh(`岩石：${r.name}。外觀：${r.appearance} 產地：${r.origin} 用途：${r.uses}`);
         }
 
-        function readSingleField(field) {
-            const r = ROCKS_DB[activeRockIndex];
-            const map = { appearance: '外觀', origin: '產地', uses: '用途' };
-            speakZhTW(`${r.name}的${map[field]}：${r[field]}`);
+        function speakFieldDetail(field) {
+            const r = ROCKS_DB[currentDetailIdx];
+            const labels = { appearance: '外觀', origin: '產地', uses: '用途' };
+            playSpeechZh(`${r.name}的${labels[field]}：${r[field]}`);
         }
 
         // =========================================================
-        // 4. 密室逃脫 5 道電子密碼關卡 (包含實體標本照看圖辨石關卡)
+        // 4. Web Audio API 警報導數音效合成器 (無需外部音檔)
         // =========================================================
-        const ESCAPE_LEVELS = [
+        let audioCtx = null;
+
+        function ensureAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) audioCtx = new AudioContextClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playToneBeep(freq, duration, type = 'sine', gainVal = 0.14) {
+            try {
+                ensureAudioContext();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function playKeyClickSound() {
+            playToneBeep(680, 0.06, 'triangle', 0.08);
+        }
+
+        function playWarningTickSound(isCritical) {
+            if (isCritical) {
+                playToneBeep(920, 0.14, 'square', 0.12);
+            } else {
+                playToneBeep(540, 0.08, 'sine', 0.07);
+            }
+        }
+
+        function playWrongLockSound() {
+            playToneBeep(165, 0.25, 'sawtooth', 0.18);
+            setTimeout(() => playToneBeep(130, 0.3, 'sawtooth', 0.18), 140);
+        }
+
+        function playUnlockChimeSound() {
+            playToneBeep(523.25, 0.15, 'triangle', 0.15);
+            setTimeout(() => playToneBeep(659.25, 0.15, 'triangle', 0.15), 110);
+            setTimeout(() => playToneBeep(783.99, 0.28, 'triangle', 0.18), 220);
+        }
+
+        function playLockdownFailSound() {
+            playToneBeep(220, 0.4, 'sawtooth', 0.22);
+            setTimeout(() => playToneBeep(155, 0.45, 'sawtooth', 0.22), 250);
+            setTimeout(() => playToneBeep(110, 0.7, 'sawtooth', 0.25), 520);
+        }
+
+        function playVictoryFanfareSound() {
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((n, idx) => {
+                setTimeout(() => playToneBeep(n, 0.26, 'triangle', 0.18), idx * 130);
+            });
+        }
+
+        // =========================================================
+        // 5. 密室逃脫 5 道電子密碼鎖關卡與嚴格 2 分鐘倒數系統
+        // =========================================================
+        const ESCAPE_STAGES = [
             {
-                id: 1,
-                title: '第 1 關：岩石標本影像與外觀辨識鎖',
-                story: '第一道電子門需要檢驗「標本辨識能力」！請觀察下方三件標本影像與外觀提示，選出正確的岩石名稱。',
-                type: 'visual_matching',
-                items: [
-                    { rockId: 'granite', prompt: '標本 A：呈灰白色或粉紅色，肉眼可見明顯粗顆粒結晶。', answer: '花岡岩' },
-                    { rockId: 'gneiss', prompt: '標本 B：呈黑白兩色或暗淡兩色相間隔，形成平行的條紋狀排列（片麻岩理）。', answer: '片麻岩' },
-                    { rockId: 'slate', prompt: '標本 C：呈深灰色或黑色的板狀，可劈成平整石板。', answer: '板岩' }
-                ],
-                choices: ['花岡岩', '片麻岩', '板岩', '大理岩', '安山岩'],
-                explanation: '標本 A 為花岡岩（灰白或粉紅結晶）；標本 B 為片麻岩（黑白相間平行條紋）；標本 C 為板岩（深灰或黑色板狀）。'
-            },
-            {
-                id: 2,
-                title: '第 2 關：觸感與細部構造鑑識儀',
-                story: '第二道防爆門的「觸感掃描儀」啟動了！請根據觸感與結構描述，配對正確的岩石名稱。',
-                type: 'matching',
-                items: [
-                    { prompt: '線索 1：用手觸摸有類似「砂紙的粗糙感」，主要是白色、青灰色或黃色。', answer: '砂岩' },
-                    { prompt: '線索 2：用手觸摸沒有粗糙的感覺，具有一層一層細微的「頁理構造」。', answer: '頁岩' },
-                    { prompt: '線索 3：較容易破裂成片狀剝落，故較少做建築材料；但顏色和紋路漂亮，可做觀賞用。', answer: '片岩' }
-                ],
-                choices: ['砂岩', '頁岩', '片岩', '石灰岩', '玄武岩'],
-                explanation: '砂岩摸起來像砂紙；頁岩顆粒極細摸起來不粗糙且具有頁理；片岩容易破裂成片狀剝落，適合做觀賞用。'
-            },
-            {
-                id: 3,
-                title: '第 3 關：臺灣地質產地衛星定位鎖',
-                story: '第三道門連接著「臺灣產地資料庫」！請根據下列臺灣產地線索，選出對應的代表性岩石。',
-                type: 'matching',
-                items: [
-                    { prompt: '地點 1：臺灣分布最廣的地區是「澎湖群島」，桃園角板山、新竹關西等地也有分布。', answer: '玄武岩' },
-                    { prompt: '地點 2：主要分布在中央山脈及雪山山脈，大多數「海拔三千公尺以上的高山」均由它組成。', answer: '板岩' },
-                    { prompt: '地點 3：主要分布在高雄大岡山、壽山、屏東恆春、小琉球及東北角等地。', answer: '石灰岩' }
-                ],
-                choices: ['玄武岩', '板岩', '石灰岩', '花岡岩', '安山岩'],
-                explanation: '澎湖群島分布最廣的是玄武岩；臺灣三千公尺以上高山多由板岩組成；高雄壽山、大岡山與小琉球等地盛產石灰岩。'
-            },
-            {
-                id: 4,
-                title: '第 4 關：人文建築與生活用途 3 位數密碼鎖',
-                story: '第四道電子保險門需要輸入【3位數密碼】！請對照下方的岩石數字代號，解開三個用途線索。',
-                type: 'keypad',
+                stageNum: 1,
+                title: '第 1 關：標本室影像與條紋特徵 3 位數密碼鎖',
+                story: '第一道防爆門掃描器啟動！請觀察下方兩件標本影像與提示，依序輸入正確的【3位數岩石代號】！',
+                lockType: 'digits',
+                codeLength: 3,
+                answer: '946',
+                specimenHintId: 'gneiss',
                 legend: [
                     { code: '1', name: '安山岩' },
-                    { code: '2', name: '大理岩' },
-                    { code: '3', name: '頁岩' },
-                    { code: '4', name: '砂岩' },
-                    { code: '5', name: '板岩' }
+                    { code: '2', name: '花岡岩' },
+                    { code: '3', name: '玄武岩' },
+                    { code: '4', name: '石灰岩' },
+                    { code: '5', name: '頁岩' },
+                    { code: '6', name: '砂岩' },
+                    { code: '7', name: '大理岩' },
+                    { code: '8', name: '板岩' },
+                    { code: '9', name: '片麻岩' }
                 ],
                 clues: [
-                    { text: '第 1 碼：大多分布在大陸邊緣（如安地列斯山脈、臺灣、日本），可做寺廟的龍柱、石雕、墓碑、地磚。', answer: '1' },
-                    { text: '第 2 碼：主要出現在蘇花公路沿線，是製造水泥和石灰原料，也可雕刻桌椅、花瓶。', answer: '2' },
-                    { text: '第 3 碼：山區原住民經常用來蓋成「石板屋」，史前人類也常製成「石刀」。', answer: '5' }
+                    '第 1 碼：如上方標本照所示，呈黑白兩色或暗淡兩色相間隔，形成平行條紋狀排列（片麻岩理）的岩石代號？',
+                    '第 2 碼：大多呈白色、灰色或紅色，可製造水泥、建築材料、化工與農業原料的岩石代號？',
+                    '第 3 碼：主要是白色、青灰色或黃色，用手觸摸有類似「砂紙粗糙感」的岩石代號？'
                 ],
-                explanation: '第1碼安山岩(1)、第2碼大理岩(2)、第3碼板岩(5)，正確電子密碼為 1-2-5！'
+                explanation: '第1碼為片麻岩(9)、第2碼為石灰岩(4)、第3碼為砂岩(6)，正確密碼為 946！'
             },
             {
-                id: 5,
-                title: '第 5 關：最終逃生出口・綜合實戰測驗',
-                story: '這是最後一道逃生大門！完成最後兩道綜合判斷題，就能解除警報逃出地質實驗室！',
-                type: 'quiz',
-                questions: [
-                    {
-                        q: '1. 關於「砂岩」與「頁岩」的用途，下列哪一項敘述完全正確？',
-                        options: [
-                            'A. 砂岩可用來製造磚瓦和陶瓷；頁岩可用來提煉石英',
-                            'B. 砂岩可作為建築材料並從中提煉石英；頁岩可用來製造磚瓦和陶瓷',
-                            'C. 兩者都只分布於金門與馬祖地區'
-                        ],
-                        answer: 1
-                    },
-                    {
-                        q: '2. 探險隊沿著「宜蘭縣蘇澳鎮到花蓮縣秀林鄉的蘇花公路沿線與附近山區」調查，他們在這裡最容易觀察到哪三種岩石？',
-                        options: [
-                            'A. 大理岩、片麻岩、片岩',
-                            'B. 玄武岩、花岡岩、安山岩',
-                            'C. 石灰岩、頁岩、砂岩'
-                        ],
-                        answer: 0
-                    }
+                stageNum: 2,
+                title: '第 2 關：臺灣地質產地衛星 4 位數密碼鎖',
+                story: '第二道電子門連接著「臺灣產地座標系統」！請依照四個臺灣產地線索，依序輸入【4位數岩石代號】。',
+                lockType: 'digits',
+                codeLength: 4,
+                answer: '3278',
+                legend: [
+                    { code: '1', name: '安山岩' },
+                    { code: '2', name: '花岡岩' },
+                    { code: '3', name: '玄武岩' },
+                    { code: '4', name: '石灰岩' },
+                    { code: '5', name: '頁岩' },
+                    { code: '6', name: '砂岩' },
+                    { code: '7', name: '大理岩' },
+                    { code: '8', name: '板岩' }
                 ],
-                explanation: '砂岩可提煉石英、頁岩可製造磚瓦和陶瓷；蘇花公路沿線與附近山區主要分布大理岩、片麻岩與片岩。'
+                clues: [
+                    '第 1 碼：臺灣分布最廣的地區是「澎湖群島」，桃園角板山、新竹關西等地也有分布。',
+                    '第 2 碼：臺灣本島出現地點很少，而「金門與馬祖」部分則是由此岩石構成。',
+                    '第 3 碼：主要出現在宜蘭縣蘇澳鎮到花蓮縣秀林鄉的蘇花公路沿線，是製造水泥和石灰的原料。',
+                    '第 4 碼：主要分布在中央山脈及雪山山脈地區，大多數「海拔三千公尺以上的高山」均由它組成。'
+                ],
+                explanation: '澎湖群島(玄武岩=3)、金門馬祖(花岡岩=2)、蘇花公路水泥原料(大理岩=7)、三千公尺高山(板岩=8)，密碼為 3278！'
+            },
+            {
+                stageNum: 3,
+                title: '第 3 關：觸感與構造鑑識・中文名稱文字密碼鎖',
+                story: '第三道安全門啟用了「中文聲紋與文字辨識鎖」！請根據線索，使用下方中文字鍵盤（或直接打字）輸入正確的【岩石名稱】。',
+                lockType: 'text',
+                placeholder: '請點擊下方文字鍵或輸入岩石名稱',
+                answer: '頁岩',
+                wordKeys: ['安山岩', '花岡岩', '玄武岩', '石灰岩', '頁岩', '砂岩', '大理岩', '板岩', '片麻岩', '片岩'],
+                clues: [
+                    '線索 A：外觀大多為青灰色或黑色。',
+                    '線索 B：用手觸摸「沒有粗糙的感覺」，具有一層一層細微的構造。',
+                    '線索 C：臺灣的西部麓山帶、西部丘陵及東部海岸山脈都有分布，可用來「製造磚瓦和陶瓷」。'
+                ],
+                explanation: '具有一層一層細微頁理構造、摸起來不粗糙且可用來製造磚瓦與陶瓷的是「頁岩」！'
+            },
+            {
+                stageNum: 4,
+                title: '第 4 關：生活用途與岩性特徵 3 位數密碼鎖',
+                story: '第四道金庫門的「用途特徵鎖」已啟動！請對照岩石代號表，解開三個生活用途與外觀謎題。',
+                lockType: 'digits',
+                codeLength: 3,
+                answer: '604',
+                legend: [
+                    { code: '0', name: '片岩' },
+                    { code: '2', name: '花岡岩' },
+                    { code: '4', name: '石灰岩' },
+                    { code: '6', name: '砂岩' },
+                    { code: '8', name: '板岩' }
+                ],
+                clues: [
+                    '第 1 碼：用手觸摸有類似「砂紙的粗糙感」，可作為建築材料，也可從中提煉「石英」作為各種用途。',
+                    '第 2 碼：呈白色、綠色、灰色或黑色；因較容易破裂成片狀剝落，故較少做建築材料，但顏色紋路漂亮「可做觀賞用」。',
+                    '第 3 碼：主要分布在「高雄市的大岡山、小岡山、半屏山、壽山」、屏東恆春、小琉球等地，可製造水泥。'
+                ],
+                explanation: '提煉石英與砂紙粗糙感(砂岩=6)、較少做建材可做觀賞用(片岩=0)、高雄大岡山與壽山(石灰岩=4)，密碼為 604！'
+            },
+            {
+                stageNum: 5,
+                title: '第 5 關：終極逃生主控門 4 位數總決戰密碼鎖',
+                story: '這是最後一道通往地面的逃生大門！結合火山岩與變質岩的綜合線索，輸入最終【4位數主控密碼】！',
+                lockType: 'digits',
+                codeLength: 4,
+                answer: '1870',
+                legend: [
+                    { code: '0', name: '片岩' },
+                    { code: '1', name: '安山岩' },
+                    { code: '3', name: '玄武岩' },
+                    { code: '5', name: '頁岩' },
+                    { code: '7', name: '大理岩' },
+                    { code: '8', name: '板岩' }
+                ],
+                clues: [
+                    '第 1 碼：大多分布在大陸邊緣（如南美洲安地列斯山脈、臺灣、日本），可做「寺廟的龍柱、石雕、墓碑、地磚」。',
+                    '第 2 碼：呈深灰色或黑色的板狀，山區原住民經常用來蓋成「石板屋」，史前人類也常製成「石刀」。',
+                    '第 3 碼：呈白色、灰色或黑色，出現在蘇花公路沿線，可做建築材料及「桌椅、花瓶」等雕刻用石材。',
+                    '第 4 碼：出現在蘇花公路沿線與附近山區，容易破裂成片狀剝落，顏色和紋路漂亮可做觀賞用。'
+                ],
+                explanation: '安山岩(1)、板岩(8)、大理岩(7)、片岩(0)，最終主控密碼為 1870！恭喜成功逃脫！'
             }
         ];
 
-        let escapeSession = {
-            active: false,
+        const STAGE_TIME_LIMIT = 120; // 每題嚴格限時 2 分鐘 (120秒)
+
+        let gameState = {
+            running: false,
             className: '',
             seatNumber: '',
             studentName: '',
-            levelIndex: 0,
-            scores: [0, 0, 0, 0, 0],
-            records: ['', '', '', '', ''],
-            startTimestamp: 0,
-            clockTimer: null,
-            elapsedString: '00:00',
-            submitted: false
+            stageIdx: 0,
+            timeLeft: STAGE_TIME_LIMIT,
+            stageTimerId: null,
+            gameStartTime: 0,
+            stageScores: [20, 20, 20, 20, 20],
+            stageAttempts: [0, 0, 0, 0, 0],
+            currentInput: '',
+            reportSent: false
         };
 
-        function beginEscapeChallenge() {
-            const className = document.getElementById('input-class').value.trim();
-            const seatNumber = document.getElementById('input-seat').value.trim();
-            const studentName = document.getElementById('input-name').value.trim();
+        function startEscapeGame() {
+            const cls = document.getElementById('stu-class').value.trim();
+            const seat = document.getElementById('stu-seat').value.trim();
+            const name = document.getElementById('stu-name').value.trim();
 
-            if (!className || !seatNumber || !studentName) {
-                showToast('請完整填寫「班級」、「座號」與「姓名」再開始挑戰喔！', '⚠️');
+            if (!cls || !seat || !name) {
+                showToast('請完整填寫「班級」、「座號」與「姓名」才能啟動密碼鎖喔！', '⚠️');
                 return;
             }
 
-            escapeSession = {
-                active: true,
-                className,
-                seatNumber,
-                studentName,
-                levelIndex: 0,
-                scores: [0, 0, 0, 0, 0],
-                records: ['', '', '', '', ''],
-                startTimestamp: Date.now(),
-                clockTimer: null,
-                elapsedString: '00:00',
-                submitted: false
+            ensureAudioContext();
+            playKeyClickSound();
+
+            gameState = {
+                running: true,
+                className: cls,
+                seatNumber: seat,
+                studentName: name,
+                stageIdx: 0,
+                timeLeft: STAGE_TIME_LIMIT,
+                stageTimerId: null,
+                gameStartTime: Date.now(),
+                stageScores: [20, 20, 20, 20, 20],
+                stageAttempts: [0, 0, 0, 0, 0],
+                currentInput: '',
+                reportSent: false
             };
 
-            document.getElementById('escape-login-card').classList.add('hidden');
-            document.getElementById('escape-victory-card').classList.add('hidden');
-            document.getElementById('escape-game-board').classList.remove('hidden');
+            document.getElementById('escape-login-view').classList.add('hidden');
+            document.getElementById('escape-fail-view').classList.add('hidden');
+            document.getElementById('escape-victory-view').classList.add('hidden');
+            document.getElementById('escape-play-view').classList.remove('hidden');
 
-            document.getElementById('hud-player').textContent = `${className} ${seatNumber}號 ${studentName}`;
-            updateEscapeHUD();
-            renderLevelPuzzle();
+            document.getElementById('hud-stu-badge').textContent = `${cls} ${seat}號 ${name}`;
+            loadEscapeStage(0);
+        }
 
-            escapeSession.clockTimer = setInterval(() => {
-                const sec = Math.floor((Date.now() - escapeSession.startTimestamp) / 1000);
-                const mm = String(Math.floor(sec / 60)).padStart(2, '0');
-                const ss = String(sec % 60).padStart(2, '0');
-                escapeSession.elapsedString = `${mm}:${ss}`;
-                document.getElementById('hud-clock').textContent = escapeSession.elapsedString;
+        function loadEscapeStage(idx) {
+            gameState.stageIdx = idx;
+            gameState.timeLeft = STAGE_TIME_LIMIT;
+            gameState.currentInput = '';
+
+            clearDangerEffects();
+            updatePlayHUD();
+            renderStagePuzzleUI();
+            startStageCountdown();
+        }
+
+        function startStageCountdown() {
+            if (gameState.stageTimerId) clearInterval(gameState.stageTimerId);
+            updateTimerVisuals();
+
+            gameState.stageTimerId = setInterval(() => {
+                if (!gameState.running) return;
+                gameState.timeLeft--;
+
+                if (gameState.timeLeft <= 15 && gameState.timeLeft > 0) {
+                    playWarningTickSound(true);
+                } else if (gameState.timeLeft <= 30 && gameState.timeLeft > 15 && gameState.timeLeft % 2 === 0) {
+                    playWarningTickSound(false);
+                }
+
+                updateTimerVisuals();
+
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.stageTimerId);
+                    triggerTimeoutFailure();
+                }
             }, 1000);
         }
 
-        function updateEscapeHUD() {
-            const idx = escapeSession.levelIndex;
-            document.getElementById('hud-level').textContent = `第 ${idx + 1} / 5 關`;
-            const total = escapeSession.scores.reduce((a, b) => a + b, 0);
-            document.getElementById('hud-points').textContent = total;
+        function updateTimerVisuals() {
+            const sec = Math.max(0, gameState.timeLeft);
+            const mm = String(Math.floor(sec / 60)).padStart(2, '0');
+            const ss = String(sec % 60).padStart(2, '0');
+            const timerDisp = document.getElementById('timer-display');
+            const timerBox = document.getElementById('timer-box');
+            const progBar = document.getElementById('timer-progress-bar');
+            const hudBar = document.getElementById('escape-hud-bar');
+            const dangerOverlay = document.getElementById('danger-overlay');
 
-            const dots = document.getElementById('hud-lock-dots');
-            dots.innerHTML = '';
-            for (let i = 0; i < 5; i++) {
-                const el = document.createElement('span');
-                if (i < idx) {
-                    el.className = 'w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-sm shadow';
-                    el.textContent = '✓';
-                } else if (i === idx) {
-                    el.className = 'w-8 h-8 rounded-full bg-amber-400 text-slate-950 font-black flex items-center justify-center text-sm ring-2 ring-amber-200';
-                    el.textContent = i + 1;
-                } else {
-                    el.className = 'w-8 h-8 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-sm border border-slate-700';
-                    el.textContent = i + 1;
-                }
-                dots.appendChild(el);
+            timerDisp.textContent = `${mm}:${ss}`;
+            const pct = (sec / STAGE_TIME_LIMIT) * 100;
+            progBar.style.width = `${pct}%`;
+
+            if (sec <= 15) {
+                timerDisp.className = 'text-2xl sm:text-3xl font-black font-mono tracking-wider text-rose-500 animate-pulse leading-tight';
+                timerBox.className = 'px-4 py-1.5 rounded-2xl bg-rose-950/90 border-2 border-rose-500 flex items-center gap-2.5 shadow-[0_0_20px_rgba(244,63,94,0.6)]';
+                progBar.className = 'h-full bg-rose-500 transition-all duration-300';
+                hudBar.className = 'bg-[#1D0B12] rounded-2xl p-4 border-2 border-rose-500 shadow-2xl space-y-3';
+                dangerOverlay.classList.remove('hidden');
+            } else if (sec <= 30) {
+                timerDisp.className = 'text-2xl sm:text-3xl font-black font-mono tracking-wider text-amber-400 leading-tight';
+                timerBox.className = 'px-4 py-1.5 rounded-2xl bg-amber-950/60 border-2 border-amber-400 flex items-center gap-2.5';
+                progBar.className = 'h-full bg-amber-400 transition-all duration-500';
+                hudBar.className = 'bg-[#171624] rounded-2xl p-4 border-2 border-amber-500/80 shadow-2xl space-y-3';
+                dangerOverlay.classList.add('hidden');
+            } else {
+                timerDisp.className = 'text-2xl sm:text-3xl font-black font-mono tracking-wider text-emerald-300 leading-tight';
+                timerBox.className = 'px-4 py-1.5 rounded-2xl bg-slate-950 border-2 border-emerald-500/50 flex items-center gap-2.5';
+                progBar.className = 'h-full bg-gradient-to-r from-emerald-400 to-teal-400 transition-all duration-500';
+                hudBar.className = 'bg-[#0E1525] rounded-2xl p-4 border-2 border-slate-700 shadow-2xl space-y-3';
+                dangerOverlay.classList.add('hidden');
             }
         }
 
-        function renderLevelPuzzle() {
-            const lv = ESCAPE_LEVELS[escapeSession.levelIndex];
-            const card = document.getElementById('puzzle-stage-card');
+        function clearDangerEffects() {
+            document.getElementById('danger-overlay').classList.add('hidden');
+        }
 
-            let bodyHtml = `
-                <div class="space-y-5">
-                    <div class="border-b border-slate-700/80 pb-4">
-                        <span class="inline-block px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-black mb-1.5">
-                            本關滿分 20 分
-                        </span>
-                        <h3 class="text-2xl font-black text-white">${lv.title}</h3>
-                        <p class="text-slate-300 mt-1 text-sm sm:text-base">${lv.story}</p>
+        function updatePlayHUD() {
+            const idx = gameState.stageIdx;
+            document.getElementById('hud-stage-text').textContent = `第 ${idx + 1} / 5 關`;
+
+            // 已完成關卡得分 + 本關目前可用分數
+            let earned = 0;
+            for (let i = 0; i < idx; i++) earned += gameState.stageScores[i];
+            document.getElementById('hud-score-val').textContent = earned;
+
+            const pills = document.getElementById('hud-stage-pills');
+            pills.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const span = document.createElement('span');
+                if (i < idx) {
+                    span.className = 'w-6 h-6 rounded-full bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center';
+                    span.textContent = '✓';
+                } else if (i === idx) {
+                    span.className = 'w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center ring-2 ring-amber-200';
+                    span.textContent = i + 1;
+                } else {
+                    span.className = 'w-6 h-6 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center border border-slate-700';
+                    span.textContent = i + 1;
+                }
+                pills.appendChild(span);
+            }
+        }
+
+        function renderStagePuzzleUI() {
+            const st = ESCAPE_STAGES[gameState.stageIdx];
+            const container = document.getElementById('puzzle-container');
+            const currentPotentialPts = gameState.stageScores[gameState.stageIdx];
+
+            let specimenPreviewHtml = '';
+            if (st.specimenHintId) {
+                const rockObj = ROCKS_DB.find(r => r.id === st.specimenHintId);
+                specimenPreviewHtml = `
+                    <div class="bg-[#152036] p-4 rounded-2xl border border-amber-500/40 flex flex-col sm:flex-row items-center gap-4">
+                        <div class="w-28 h-28 shrink-0 rounded-xl specimen-stage border border-amber-400/50 p-2 flex items-center justify-center">
+                            ${brokenImageIds.has(rockObj.id)
+                                ? createFallbackSVG(rockObj.id)
+                                : `<img src="${rockObj.img}" alt="未知標本影像" onerror="onImgLoadError(this, '${rockObj.id}')" class="max-h-full max-w-full object-contain">`
+                            }
+                        </div>
+                        <div class="space-y-1 text-center sm:text-left">
+                            <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-xs font-bold">🔍 現場掃描標本證物</span>
+                            <p class="text-sm text-slate-200 font-bold">觀察這件岩石標本的外觀紋理，找出它在下方代號表中的數字！</p>
+                        </div>
                     </div>
-            `;
+                `;
+            }
 
-            if (lv.type === 'visual_matching') {
-                bodyHtml += `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">`;
-                lv.items.forEach((item, i) => {
-                    const rockObj = ROCKS_DB.find(r => r.id === item.rockId);
-                    bodyHtml += `
-                        <div class="p-4 rounded-2xl bg-[#162035] border border-slate-700 flex flex-col justify-between gap-3">
-                            <div class="space-y-2.5">
-                                <div class="w-full h-36 rounded-xl specimen-stage border border-amber-500/30 flex items-center justify-center p-2">
-                                    ${missingImagesSet.has(rockObj.id)
-                                        ? buildFallbackRockSVG(rockObj.id)
-                                        : `<img src="${rockObj.img}" alt="標本謎題" onerror="handleSpecimenImgError(this, '${rockObj.id}')" class="max-h-full max-w-full object-contain drop-shadow-lg">`
-                                    }
-                                </div>
-                                <p class="font-bold text-slate-100 text-sm leading-relaxed">${item.prompt}</p>
-                            </div>
-                            <select id="lv-match-${i}" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border-2 border-amber-500/50 text-amber-300 font-black text-sm outline-none focus:border-amber-400">
-                                <option value="">-- 請選擇岩石 --</option>
-                                ${lv.choices.map(c => `<option value="${c}">${c}</option>`).join('')}
-                            </select>
-                        </div>
-                    `;
-                });
-                bodyHtml += `</div>`;
-            } else if (lv.type === 'matching') {
-                bodyHtml += `<div class="space-y-3.5">`;
-                lv.items.forEach((item, i) => {
-                    bodyHtml += `
-                        <div class="p-4 rounded-2xl bg-[#162035] border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-3">
-                            <p class="font-bold text-slate-100 text-sm sm:text-base leading-relaxed">${item.prompt}</p>
-                            <select id="lv-match-${i}" class="px-4 py-2.5 rounded-xl bg-slate-900 border-2 border-amber-500/50 text-amber-300 font-black text-base shrink-0 outline-none focus:border-amber-400">
-                                <option value="">-- 請選擇岩石 --</option>
-                                ${lv.choices.map(c => `<option value="${c}">${c}</option>`).join('')}
-                            </select>
-                        </div>
-                    `;
-                });
-                bodyHtml += `</div>`;
-            } else if (lv.type === 'keypad') {
-                bodyHtml += `
-                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-amber-500/30">
-                        <div class="text-xs font-bold text-amber-300 mb-2.5">🔢 電子鎖岩石代號表：</div>
-                        <div class="grid grid-cols-5 gap-2 text-center">
-                            ${lv.legend.map(l => `
-                                <div class="bg-[#162035] p-2.5 rounded-xl border border-slate-700">
-                                    <div class="text-lg font-black text-amber-400">${l.code}</div>
-                                    <div class="text-xs font-bold text-white">${l.name}</div>
+            let legendHtml = '';
+            if (st.legend) {
+                legendHtml = `
+                    <div class="bg-slate-900/95 p-4 rounded-2xl border border-slate-700">
+                        <div class="text-xs font-black text-amber-300 mb-2">🔢 岩石數字代號對照表：</div>
+                        <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                            ${st.legend.map(item => `
+                                <div class="bg-[#152036] px-2.5 py-2 rounded-xl border border-slate-700/90 flex items-center justify-between">
+                                    <span class="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center">${item.code}</span>
+                                    <span class="text-xs sm:text-sm font-bold text-white">${item.name}</span>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
-                    <div class="space-y-3">
-                        ${lv.clues.map((c, i) => `
-                            <div class="p-4 rounded-2xl bg-[#162035] border border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                <p class="font-bold text-slate-100 text-sm sm:text-base">${c.text}</p>
-                                <select id="lv-key-${i}" class="px-4 py-2.5 rounded-xl bg-slate-900 border-2 border-amber-500/50 text-amber-300 font-black shrink-0 outline-none">
-                                    <option value="">選擇數字</option>
-                                    ${lv.legend.map(l => `<option value="${l.code}">${l.code} (${l.name})</option>`).join('')}
-                                </select>
-                            </div>
-                        `).join('')}
+                `;
+            }
+
+            let lockPadHtml = '';
+            if (st.lockType === 'digits') {
+                // 數字密碼鎖槽位 + 0~9 實體觸控按鍵盤
+                let slots = '';
+                for (let i = 0; i < st.codeLength; i++) {
+                    const ch = gameState.currentInput[i] || '';
+                    slots += `
+                        <div class="w-14 h-16 sm:w-16 sm:h-20 rounded-2xl bg-slate-950 border-2 ${ch ? 'border-amber-400 text-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.3)]' : 'border-slate-700 text-slate-600'} flex items-center justify-center text-3xl sm:text-4xl font-black font-mono">
+                            ${ch || '•'}
+                        </div>
+                    `;
+                }
+
+                const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '清除', '0', '退格'];
+                lockPadHtml = `
+                    <div id="lock-mechanism-box" class="bg-[#131C30] p-5 rounded-3xl border-2 border-amber-500/40 space-y-4">
+                        <div class="text-center space-y-1">
+                            <span class="text-xs font-black text-amber-300 tracking-widest">🔐 電子數字密碼鎖（請輸入 ${st.codeLength} 位數密碼）</span>
+                            <div id="digit-slots-row" class="flex justify-center gap-3 pt-2">${slots}</div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 max-w-xs mx-auto">
+                            ${keys.map(k => {
+                                if (k === '清除') {
+                                    return `<button type="button" onclick="clearLockInput()" class="py-3 rounded-xl bg-rose-900/60 hover:bg-rose-800 border border-rose-500/40 text-rose-200 font-black text-sm transition active:scale-95">清除</button>`;
+                                } else if (k === '退格') {
+                                    return `<button type="button" onclick="backspaceLockInput()" class="py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-black text-sm transition active:scale-95">⌫ 退格</button>`;
+                                } else {
+                                    return `<button type="button" onclick="pressDigitKey('${k}')" class="py-3.5 rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 text-white font-black text-xl font-mono shadow transition active:scale-95">${k}</button>`;
+                                }
+                            }).join('')}
+                        </div>
+
+                        <button type="button" onclick="verifyStagePassword()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-base sm:text-lg shadow-lg transition transform active:scale-98">
+                            🔓 確認密碼・解除本關電子鎖
+                        </button>
                     </div>
                 `;
-            } else if (lv.type === 'quiz') {
-                bodyHtml += `<div class="space-y-4">`;
-                lv.questions.forEach((q, qIdx) => {
-                    bodyHtml += `
-                        <div class="p-4 rounded-2xl bg-[#162035] border border-slate-700 space-y-3">
-                            <p class="font-black text-white text-base">${q.q}</p>
-                            <div class="space-y-2">
-                                ${q.options.map((opt, oIdx) => `
-                                    <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/90 border border-slate-700 hover:border-amber-400 cursor-pointer transition">
-                                        <input type="radio" name="lv-quiz-${qIdx}" value="${oIdx}" class="w-4 h-4 accent-amber-400">
-                                        <span class="text-sm sm:text-base text-slate-200">${opt}</span>
-                                    </label>
+            } else {
+                // 中文岩石名稱文字密碼鎖
+                lockPadHtml = `
+                    <div id="lock-mechanism-box" class="bg-[#131C30] p-5 rounded-3xl border-2 border-amber-500/40 space-y-4">
+                        <div class="text-center space-y-2">
+                            <span class="text-xs font-black text-amber-300 tracking-widest">🔐 中文岩石名稱電子鎖（點選按鍵或直接輸入）</span>
+                            <div class="flex gap-2 max-w-md mx-auto">
+                                <input type="text" id="text-lock-input" value="${gameState.currentInput}" oninput="syncTextLockInput(this.value)" placeholder="${st.placeholder}" class="flex-1 px-4 py-3 rounded-2xl bg-slate-950 border-2 border-amber-400/70 text-center text-xl font-black text-amber-300 outline-none">
+                                <button type="button" onclick="clearLockInput()" class="px-4 py-3 rounded-2xl bg-rose-900/60 hover:bg-rose-800 text-rose-200 font-bold text-sm border border-rose-500/40">清除</button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <div class="text-xs text-slate-400 text-center">👇 點擊下方岩石銘牌快速輸入密碼：</div>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                                ${st.wordKeys.map(w => `
+                                    <button type="button" onclick="selectWordKey('${w}')" class="py-2.5 px-2 rounded-xl bg-slate-900 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 text-slate-100 font-black text-sm transition active:scale-95">
+                                        ${w}
+                                    </button>
                                 `).join('')}
                             </div>
                         </div>
-                    `;
-                });
-                bodyHtml += `</div>`;
+
+                        <button type="button" onclick="verifyStagePassword()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-base sm:text-lg shadow-lg transition">
+                            🔓 確認名稱・解除本關電子鎖
+                        </button>
+                    </div>
+                `;
             }
 
-            bodyHtml += `
-                <div id="lv-feedback" class="hidden p-4 rounded-2xl border text-sm sm:text-base"></div>
-                <div id="lv-footer" class="pt-3 flex justify-end">
-                    <button onclick="checkLevelSubmission()" class="px-7 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base shadow-lg transition">
-                        🔑 輸入密碼・解鎖關卡
-                    </button>
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- 左側：謎題背景與線索 -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="border-b border-slate-800 pb-3.5 flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <span class="inline-block px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-black mb-1">
+                                    本關目前可得：${currentPotentialPts} 分（答錯一次扣 3 分）
+                                </span>
+                                <h3 class="text-xl sm:text-2xl font-black text-white">${st.title}</h3>
+                            </div>
+                        </div>
+
+                        <p class="text-sm sm:text-base text-slate-300 leading-relaxed">${st.story}</p>
+
+                        ${specimenPreviewHtml}
+                        ${legendHtml}
+
+                        <div class="space-y-2.5">
+                            <div class="text-xs font-black text-teal-300 tracking-wider">🔎 現場解謎線索：</div>
+                            ${st.clues.map(c => `
+                                <div class="p-3.5 rounded-2xl bg-[#152036] border border-slate-700/90 text-sm sm:text-base text-slate-100 font-medium leading-relaxed">
+                                    ${c}
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div id="stage-feedback-box" class="hidden p-4 rounded-2xl border text-sm font-bold"></div>
+                    </div>
+
+                    <!-- 右側：實體密碼鎖操控面板 -->
+                    <div class="lg:col-span-5">
+                        ${lockPadHtml}
+                    </div>
                 </div>
-            </div>`;
-
-            card.innerHTML = bodyHtml;
-        }
-
-        function checkLevelSubmission() {
-            const idx = escapeSession.levelIndex;
-            const lv = ESCAPE_LEVELS[idx];
-            let pts = 0;
-            let detailStr = '';
-
-            if (lv.type === 'visual_matching' || lv.type === 'matching') {
-                let hits = 0;
-                const picks = [];
-                for (let i = 0; i < lv.items.length; i++) {
-                    const val = document.getElementById(`lv-match-${i}`).value;
-                    if (!val) {
-                        showToast('請先完成所有線索的岩石選擇再解鎖喔！', '⚠️');
-                        return;
-                    }
-                    picks.push(val);
-                    if (val === lv.items[i].answer) hits++;
-                }
-                pts = hits === 3 ? 20 : (hits === 2 ? 13 : (hits === 1 ? 7 : 0));
-                detailStr = `第${idx + 1}關:${picks.join('/')}(${pts}分)`;
-            } else if (lv.type === 'keypad') {
-                let hits = 0;
-                const digits = [];
-                for (let i = 0; i < lv.clues.length; i++) {
-                    const val = document.getElementById(`lv-key-${i}`).value;
-                    if (!val) {
-                        showToast('請選擇全部 3 個密碼數字再解鎖！', '⚠️');
-                        return;
-                    }
-                    digits.push(val);
-                    if (val === lv.clues[i].answer) hits++;
-                }
-                pts = hits === 3 ? 20 : (hits === 2 ? 13 : (hits === 1 ? 7 : 0));
-                detailStr = `第${idx + 1}關密碼:${digits.join('')}(${pts}分)`;
-            } else if (lv.type === 'quiz') {
-                let hits = 0;
-                const letters = [];
-                for (let i = 0; i < lv.questions.length; i++) {
-                    const checked = document.querySelector(`input[name="lv-quiz-${i}"]:checked`);
-                    if (!checked) {
-                        showToast('請先作答完兩道選擇題再解鎖！', '⚠️');
-                        return;
-                    }
-                    const chosen = parseInt(checked.value, 10);
-                    letters.push(['A', 'B', 'C'][chosen]);
-                    if (chosen === lv.questions[i].answer) hits++;
-                }
-                pts = hits * 10;
-                detailStr = `第${idx + 1}關:${letters.join(',')}(${pts}分)`;
-            }
-
-            escapeSession.scores[idx] = pts;
-            escapeSession.records[idx] = detailStr;
-            updateEscapeHUD();
-
-            const fb = document.getElementById('lv-feedback');
-            fb.classList.remove('hidden');
-            if (pts === 20) {
-                fb.className = 'p-4 rounded-2xl border bg-emerald-500/15 border-emerald-400/60 text-emerald-200 space-y-1';
-                fb.innerHTML = `<div class="text-lg font-black text-emerald-300">🎉 密碼完全正確！獲得滿分 20 分！</div><p class="text-sm text-slate-200">${lv.explanation}</p>`;
-            } else {
-                fb.className = 'p-4 rounded-2xl border bg-amber-500/15 border-amber-400/60 text-amber-200 space-y-1';
-                fb.innerHTML = `<div class="text-lg font-black text-amber-300">🔓 啟動備用線路（本關獲得 ${pts} / 20 分）</div><p class="text-sm text-slate-200"><strong>地質解析：</strong>${lv.explanation}</p>`;
-            }
-
-            const isFinal = idx === ESCAPE_LEVELS.length - 1;
-            document.getElementById('lv-footer').innerHTML = `
-                <button onclick="${isFinal ? 'completeEscapeGame()' : 'advanceToNextLevel()'}" class="px-7 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-base shadow-lg transition">
-                    ${isFinal ? '🏆 領取通關證書 ＆ 傳送成績' : '➡️ 進入下一道關卡'}
-                </button>
             `;
         }
 
-        function advanceToNextLevel() {
-            escapeSession.levelIndex++;
-            updateEscapeHUD();
-            renderLevelPuzzle();
+        function pressDigitKey(digit) {
+            const st = ESCAPE_STAGES[gameState.stageIdx];
+            if (st.lockType !== 'digits') return;
+            if (gameState.currentInput.length >= st.codeLength) return;
+            playKeyClickSound();
+            gameState.currentInput += digit;
+            refreshDigitSlotsOnly();
         }
 
-        function completeEscapeGame() {
-            clearInterval(escapeSession.clockTimer);
-            document.getElementById('escape-game-board').classList.add('hidden');
-            document.getElementById('escape-victory-card').classList.remove('hidden');
+        function backspaceLockInput() {
+            if (!gameState.currentInput) return;
+            playKeyClickSound();
+            gameState.currentInput = gameState.currentInput.slice(0, -1);
+            refreshDigitSlotsOnly();
+        }
 
-            const totalScore = escapeSession.scores.reduce((a, b) => a + b, 0);
-            const fullCorrectLevels = escapeSession.scores.filter(s => s === 20).length;
+        function clearLockInput() {
+            playKeyClickSound();
+            gameState.currentInput = '';
+            const st = ESCAPE_STAGES[gameState.stageIdx];
+            if (st.lockType === 'digits') {
+                refreshDigitSlotsOnly();
+            } else {
+                const inp = document.getElementById('text-lock-input');
+                if (inp) inp.value = '';
+            }
+        }
 
-            document.getElementById('vic-student').textContent = `${escapeSession.className} ${escapeSession.seatNumber}號 ${escapeSession.studentName}`;
-            document.getElementById('vic-score').textContent = totalScore;
-            document.getElementById('vic-correct').textContent = `${fullCorrectLevels} / 5 關滿分`;
-            document.getElementById('vic-time').textContent = escapeSession.elapsedString;
-
-            let rankTitle = '🧭 見習地質員';
-            if (totalScore === 100) rankTitle = '👑 傳說級地質大師';
-            else if (totalScore >= 80) rankTitle = '🌟 資深地質探險家';
-            else if (totalScore >= 60) rankTitle = '🪨 合格地質調查員';
-            document.getElementById('vic-title').textContent = rankTitle;
-
-            document.getElementById('vic-review-list').innerHTML = ESCAPE_LEVELS.map((lv, i) => `
-                <div class="p-3.5 rounded-2xl bg-[#162035] border border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                        <div class="font-bold text-white text-sm">${lv.title}</div>
-                        <p class="text-xs text-slate-300 mt-0.5">${lv.explanation}</p>
+        function refreshDigitSlotsOnly() {
+            const st = ESCAPE_STAGES[gameState.stageIdx];
+            const row = document.getElementById('digit-slots-row');
+            if (!row) return;
+            let slots = '';
+            for (let i = 0; i < st.codeLength; i++) {
+                const ch = gameState.currentInput[i] || '';
+                slots += `
+                    <div class="w-14 h-16 sm:w-16 sm:h-20 rounded-2xl bg-slate-950 border-2 ${ch ? 'border-amber-400 text-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.3)]' : 'border-slate-700 text-slate-600'} flex items-center justify-center text-3xl sm:text-4xl font-black font-mono">
+                        ${ch || '•'}
                     </div>
-                    <span class="px-3 py-1 rounded-lg font-black text-xs shrink-0 ${escapeSession.scores[i] === 20 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}">
-                        ${escapeSession.scores[i]} / 20 分
+                `;
+            }
+            row.innerHTML = slots;
+        }
+
+        function syncTextLockInput(val) {
+            gameState.currentInput = val.trim();
+        }
+
+        function selectWordKey(word) {
+            playKeyClickSound();
+            gameState.currentInput = word;
+            const inp = document.getElementById('text-lock-input');
+            if (inp) inp.value = word;
+        }
+
+        // 支援實體鍵盤直接輸入數字或按 Enter 解鎖
+        window.addEventListener('keydown', (e) => {
+            if (!gameState.running || document.getElementById('escape-play-view').classList.contains('hidden')) return;
+            if (!document.getElementById('drawer-handbook').classList.contains('hidden')) return;
+
+            const st = ESCAPE_STAGES[gameState.stageIdx];
+            if (st.lockType === 'digits') {
+                if (/^[0-9]$/.test(e.key)) {
+                    pressDigitKey(e.key);
+                } else if (e.key === 'Backspace') {
+                    backspaceLockInput();
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    verifyStagePassword();
+                }
+            } else if (st.lockType === 'text' && e.key === 'Enter') {
+                e.preventDefault();
+                verifyStagePassword();
+            }
+        });
+
+        function verifyStagePassword() {
+            if (!gameState.running) return;
+            const idx = gameState.stageIdx;
+            const st = ESCAPE_STAGES[idx];
+            const userVal = gameState.currentInput.trim();
+
+            if (!userVal) {
+                showToast('請先輸入密碼再按解鎖喔！', '⚠️');
+                return;
+            }
+            if (st.lockType === 'digits' && userVal.length < st.codeLength) {
+                showToast(`請輸入完整的 ${st.codeLength} 位數密碼！`, '⚠️');
+                return;
+            }
+
+            if (userVal === st.answer) {
+                // 密碼正確！解鎖並推進到下一關或勝利畫面
+                clearInterval(gameState.stageTimerId);
+                clearDangerEffects();
+                playUnlockChimeSound();
+
+                const earnedPts = gameState.stageScores[idx];
+                const fb = document.getElementById('stage-feedback-box');
+                fb.classList.remove('hidden');
+                fb.className = 'p-4 rounded-2xl border bg-emerald-500/20 border-emerald-400 text-emerald-200 space-y-1';
+                fb.innerHTML = `<div class="text-base font-black text-emerald-300">🔓 密碼正確！電子鎖已解除（本關獲得 ${earnedPts} 分）</div><p class="text-xs sm:text-sm text-slate-200">${st.explanation}</p>`;
+
+                showToast(`🎉 第 ${idx + 1} 關解鎖成功！獲得 ${earnedPts} 分`, '🔓');
+
+                setTimeout(() => {
+                    if (!gameState.running) return;
+                    if (idx < ESCAPE_STAGES.length - 1) {
+                        loadEscapeStage(idx + 1);
+                    } else {
+                        triggerEscapeVictory();
+                    }
+                }, 1350);
+            } else {
+                // 密碼錯誤！震動紅燈並扣 3 分（最低保留 8 分）
+                playWrongLockSound();
+                gameState.stageAttempts[idx]++;
+                gameState.stageScores[idx] = Math.max(8, gameState.stageScores[idx] - 3);
+
+                const lockBox = document.getElementById('lock-mechanism-box');
+                if (lockBox) {
+                    lockBox.classList.remove('animate-lock-shake', 'border-rose-500');
+                    void lockBox.offsetWidth; // 觸發重繪讓動畫可重複播放
+                    lockBox.classList.add('animate-lock-shake', 'border-rose-500');
+                }
+
+                const fb = document.getElementById('stage-feedback-box');
+                fb.classList.remove('hidden');
+                fb.className = 'p-4 rounded-2xl border bg-rose-500/20 border-rose-500 text-rose-200';
+                fb.innerHTML = `❌ 密碼「${userVal}」錯誤！系統已扣減 3 分（本關剩餘可得 ${gameState.stageScores[idx]} 分）。可點擊右上角「📖 隨身圖鑑」確認線索！`;
+
+                // 清空輸入讓學生重試
+                gameState.currentInput = '';
+                if (st.lockType === 'digits') {
+                    refreshDigitSlotsOnly();
+                } else {
+                    const inp = document.getElementById('text-lock-input');
+                    if (inp) inp.value = '';
+                }
+            }
+        }
+
+        // =========================================================
+        // 6. 震撼失敗畫面 ＆ 榮耀過關畫面 + 彩帶特效 + Google Sheet 回報
+        // =========================================================
+        function formatTotalElapsed() {
+            const totalSec = Math.floor((Date.now() - gameState.gameStartTime) / 1000);
+            const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+            const ss = String(totalSec % 60).padStart(2, '0');
+            return `${mm}:${ss}`;
+        }
+
+        function triggerTimeoutFailure() {
+            gameState.running = false;
+            clearDangerEffects();
+            closeHandbookDrawer();
+            playLockdownFailSound();
+
+            const failedStageNum = gameState.stageIdx + 1;
+            let earnedBeforeFail = 0;
+            for (let i = 0; i < gameState.stageIdx; i++) {
+                earnedBeforeFail += gameState.stageScores[i];
+            }
+
+            document.getElementById('escape-play-view').classList.add('hidden');
+            document.getElementById('escape-fail-view').classList.remove('hidden');
+
+            document.getElementById('fail-subtitle').textContent = `警報響起！你未能在 2 分鐘內解開「第 ${failedStageNum} 關」電子密碼鎖，防爆合金門已全面鎖死！`;
+            document.getElementById('fail-stu-info').textContent = `${gameState.className} ${gameState.seatNumber}號 ${gameState.studentName}`;
+            document.getElementById('fail-stage-info').textContent = `止步第 ${failedStageNum} / 5 關（超時）`;
+            document.getElementById('fail-score-info').textContent = `${earnedBeforeFail} 分`;
+
+            // 將本次未通關紀錄傳送至 Google Sheet（標註止步關卡）
+            const elapsed = formatTotalElapsed();
+            const payload = {
+                className: gameState.className,
+                seatNumber: gameState.seatNumber,
+                studentName: gameState.studentName,
+                score: earnedBeforeFail,
+                correctCount: `失敗(止步第${failedStageNum}關)`,
+                timeSpent: elapsed,
+                details: `第${failedStageNum}關超時失敗 | 已完成${failedStageNum - 1}關`
+            };
+            postPayloadToGas(payload, 'fail-sheet-banner');
+        }
+
+        function triggerEscapeVictory() {
+            gameState.running = false;
+            clearDangerEffects();
+            closeHandbookDrawer();
+            playVictoryFanfareSound();
+            launchConfettiCelebration();
+
+            const totalScore = gameState.stageScores.reduce((a, b) => a + b, 0);
+            const elapsed = formatTotalElapsed();
+
+            document.getElementById('escape-play-view').classList.add('hidden');
+            document.getElementById('escape-victory-view').classList.remove('hidden');
+
+            document.getElementById('vic-stu-info').textContent = `${gameState.className} ${gameState.seatNumber}號 ${gameState.studentName}`;
+            document.getElementById('vic-total-score').textContent = totalScore;
+            document.getElementById('vic-total-time').textContent = elapsed;
+
+            let badge = '🪨 合格地質員';
+            if (totalScore === 100) badge = '👑 完美無瑕地質大師';
+            else if (totalScore >= 85) badge = '🌟 資深地質探險家';
+            else if (totalScore >= 70) badge = '🧭 敏捷密室破解者';
+            document.getElementById('vic-rank-badge').textContent = badge;
+
+            document.getElementById('vic-details-list').innerHTML = ESCAPE_STAGES.map((st, i) => `
+                <div class="p-3.5 rounded-2xl bg-[#111A2E]/90 border border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <div class="font-bold text-white text-sm">${st.title}</div>
+                        <p class="text-xs text-slate-300 mt-0.5">${st.explanation}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-lg font-black text-xs shrink-0 ${gameState.stageScores[i] === 20 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}">
+                        ${gameState.stageScores[i]} / 20 分（試誤${gameState.stageAttempts[i]}次）
                     </span>
                 </div>
             `).join('');
 
-            sendResultToGoogleSheet(false);
+            submitScoreToSheet(false);
         }
 
-        function restartEscape() {
-            document.getElementById('escape-victory-card').classList.add('hidden');
-            document.getElementById('escape-login-card').classList.remove('hidden');
+        function restartFromBeginning() {
+            stopConfettiCelebration();
+            clearDangerEffects();
+            if (gameState.stageTimerId) clearInterval(gameState.stageTimerId);
+            document.getElementById('escape-fail-view').classList.add('hidden');
+            document.getElementById('escape-victory-view').classList.add('hidden');
+            document.getElementById('escape-play-view').classList.add('hidden');
+            document.getElementById('escape-login-view').classList.remove('hidden');
         }
 
-        // =========================================================
-        // 5. Google Sheets 成績傳送與教師後台設定 (支援 ?sheetUrl= 與 ?gas=)
-        // =========================================================
-        const LS_GAS_URL = 'rock_museum_gas_exec_url_v3';
+        // 全螢幕勝利彩帶粒子特效 (Canvas Confetti)
+        let confettiAnimId = null;
+        function launchConfettiCelebration() {
+            const canvas = document.getElementById('confetti-canvas');
+            canvas.classList.remove('hidden');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
 
-        function resolveGasUrl() {
-            const params = new URLSearchParams(window.location.search);
-            const fromParam = params.get('sheetUrl') || params.get('gas') || params.get('gasUrl');
-            if (fromParam && fromParam.startsWith('http')) {
-                localStorage.setItem(LS_GAS_URL, fromParam);
-                return fromParam;
+            const colors = ['#FBBF24', '#34D399', '#38BDF8', '#F472B6', '#FDE68A'];
+            const pieces = Array.from({ length: 120 }, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                w: Math.random() * 10 + 6,
+                h: Math.random() * 6 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vy: Math.random() * 3.5 + 2,
+                vx: (Math.random() - 0.5) * 2.5,
+                rot: Math.random() * 360,
+                vrot: (Math.random() - 0.5) * 8
+            }));
+
+            let frameCount = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    p.y += p.vy;
+                    p.x += p.vx;
+                    p.rot += p.vrot;
+                    if (p.y > canvas.height && frameCount < 240) {
+                        p.y = -15;
+                        p.x = Math.random() * canvas.width;
+                    }
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+                frameCount++;
+                if (frameCount < 340) {
+                    confettiAnimId = requestAnimationFrame(draw);
+                } else {
+                    stopConfettiCelebration();
+                }
             }
-            return localStorage.getItem(LS_GAS_URL) || '';
+            draw();
         }
 
-        function updateSheetConnBadge() {
-            const url = resolveGasUrl();
-            const box = document.getElementById('sheet-conn-status');
-            const msg = document.getElementById('sheet-conn-msg');
+        function stopConfettiCelebration() {
+            if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+            const canvas = document.getElementById('confetti-canvas');
+            canvas.classList.add('hidden');
+        }
+
+        // =========================================================
+        // 7. Google Sheets 成績傳送與教師設定彈窗 (支援 ?sheetUrl= 自動帶入)
+        // =========================================================
+        const GAS_STORAGE_KEY = 'rock_escape_gas_exec_url_final';
+
+        function getConfiguredGasUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const paramUrl = params.get('sheetUrl') || params.get('gas') || params.get('gasUrl');
+            if (paramUrl && paramUrl.startsWith('http')) {
+                localStorage.setItem(GAS_STORAGE_KEY, paramUrl);
+                return paramUrl;
+            }
+            return localStorage.getItem(GAS_STORAGE_KEY) || '';
+        }
+
+        function refreshLoginSheetStatus() {
+            const url = getConfiguredGasUrl();
+            const box = document.getElementById('login-sheet-status');
+            const txt = document.getElementById('login-sheet-text');
             if (url) {
                 box.className = 'px-3.5 py-2.5 rounded-xl text-xs flex items-center justify-between bg-emerald-500/15 border border-emerald-500/40 text-emerald-200';
-                msg.textContent = '✅ 已成功綁定老師的 Google Sheet 成績表單';
+                txt.textContent = '✅ 已自動連線至老師的 Google Sheet 成績表單';
             } else {
                 box.className = 'px-3.5 py-2.5 rounded-xl text-xs flex items-center justify-between bg-amber-500/10 border border-amber-500/30 text-amber-200';
-                msg.textContent = '⚠️ 尚未設定 Google Sheet 網址（老師請點右側設定，學生可直接練習）';
+                txt.textContent = '⚠️ 尚未設定 Google Sheet 網址（老師請點右側設定，學生可直接挑戰）';
             }
         }
 
         function openTeacherModal() {
-            document.getElementById('teacher-gas-input').value = resolveGasUrl();
+            document.getElementById('gas-url-field').value = getConfiguredGasUrl();
             document.getElementById('modal-teacher').classList.remove('hidden');
         }
 
@@ -1363,102 +1784,101 @@ function doPost(e) {
             document.getElementById('modal-teacher').classList.add('hidden');
         }
 
-        function saveTeacherGasUrl() {
-            const val = document.getElementById('teacher-gas-input').value.trim();
+        function saveGasUrl() {
+            const val = document.getElementById('gas-url-field').value.trim();
             if (val && !val.startsWith('https://script.google.com/')) {
                 showToast('請輸入正確的 https://script.google.com/.../exec 網址！', '⚠️');
                 return;
             }
-            localStorage.setItem(LS_GAS_URL, val);
-            updateSheetConnBadge();
+            localStorage.setItem(GAS_STORAGE_KEY, val);
+            refreshLoginSheetStatus();
             showToast('Google Sheet 連線網址已儲存！', '✅');
         }
 
-        function safeCopyText(text, toastMsg) {
-            const buf = document.getElementById('copy-buffer');
-            buf.value = text;
-            buf.select();
+        function copyTextSafe(text, msg) {
+            const helper = document.getElementById('clipboard-helper');
+            helper.value = text;
+            helper.select();
             try {
                 document.execCommand('copy');
-                showToast(toastMsg, '📋');
+                showToast(msg, '📋');
             } catch (e) {
                 showToast('複製失敗，請手動選取複製', '⚠️');
             }
         }
 
-        function copyAppsScriptCode() {
-            const code = document.getElementById('apps-script-box').value;
-            safeCopyText(code, '已複製程式碼.gs（含 doGet 與 doPost）！');
+        function copyGasCode() {
+            copyTextSafe(document.getElementById('gas-code-template').value, '已複製程式碼.gs（含 doGet 與 doPost）！');
         }
 
-        function copyStudentAutoLink() {
-            const url = resolveGasUrl();
+        function copyStudentShareLink() {
+            const url = getConfiguredGasUrl();
             if (!url) {
-                showToast('請先在上方欄位貼入並儲存您的 /exec 網址喔！', '⚠️');
+                showToast('請先貼入並儲存您的 /exec 網址再產生學生連結！', '⚠️');
                 return;
             }
-            const cleanBase = window.location.href.split('?')[0];
-            const studentLink = `${cleanBase}?sheetUrl=${encodeURIComponent(url)}`;
-            safeCopyText(studentLink, '已複製「學生專屬連線網址」！傳給學生即可自動收成績。');
+            const base = window.location.href.split('?')[0];
+            const shareUrl = `${base}?sheetUrl=${encodeURIComponent(url)}`;
+            copyTextSafe(shareUrl, '已複製「學生專屬連線網址」！傳給學生即可自動收成績。');
         }
 
-        async function sendTestRowToSheet() {
-            const url = document.getElementById('teacher-gas-input').value.trim() || resolveGasUrl();
+        async function testGasConnection() {
+            const url = document.getElementById('gas-url-field').value.trim() || getConfiguredGasUrl();
             if (!url) {
                 showToast('請先貼入 Google Apps Script 網址！', '⚠️');
                 return;
             }
-            saveTeacherGasUrl();
-            const testPayload = {
+            saveGasUrl();
+            const testData = {
                 className: '教師測試班',
                 seatNumber: '00',
                 studentName: '系統連線測試',
                 score: 100,
-                correctCount: '5 / 5 關滿分',
-                timeSpent: '00:12',
-                details: '教師後台測試資料寫入成功'
+                correctCount: '5/5 關通關',
+                timeSpent: '01:05',
+                details: '教師設定測試寫入成功'
             };
             try {
                 await fetch(url, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(testPayload)
+                    body: JSON.stringify(testData)
                 });
-                showToast('測試成績已送出！請至 Google 試算表查看是否新增一列。', '🎉');
+                showToast('測試資料已送出！請檢查 Google 試算表是否新增一列。', '🎉');
             } catch (err) {
-                showToast('傳送失敗，請確認部署權限已設為「所有人」。', '❌');
+                showToast('傳送失敗，請確認部署權限設為「所有人」。', '❌');
             }
         }
 
-        async function sendResultToGoogleSheet(forceRetry = false) {
-            if (escapeSession.submitted && !forceRetry) return;
+        async function submitScoreToSheet(isRetry) {
+            if (gameState.reportSent && !isRetry) return;
+            const totalScore = gameState.stageScores.reduce((a, b) => a + b, 0);
+            const elapsed = document.getElementById('vic-total-time').textContent;
+            const details = gameState.stageScores.map((s, i) => `第${i + 1}關:${s}分(誤${gameState.stageAttempts[i]}次)`).join(' | ');
 
-            const url = resolveGasUrl();
-            const banner = document.getElementById('sheet-submit-banner');
-            const icon = document.getElementById('sheet-submit-icon');
-            const msg = document.getElementById('sheet-submit-msg');
-            const resendBtn = document.getElementById('btn-resend');
+            const payload = {
+                className: gameState.className,
+                seatNumber: gameState.seatNumber,
+                studentName: gameState.studentName,
+                score: totalScore,
+                correctCount: '5 / 5 關全數通關',
+                timeSpent: elapsed,
+                details
+            };
+
+            const url = getConfiguredGasUrl();
+            const banner = document.getElementById('vic-sheet-banner');
+            const icon = document.getElementById('vic-sheet-icon');
+            const msg = document.getElementById('vic-sheet-msg');
+            const retryBtn = document.getElementById('vic-retry-btn');
 
             if (!url) {
                 banner.className = 'p-4 rounded-2xl border text-sm font-bold flex items-center justify-between gap-3 bg-amber-500/15 border-amber-400/50 text-amber-200';
                 icon.textContent = 'ℹ️';
-                msg.textContent = '目前為自主練習模式（尚未綁定老師的 Google Sheet，請截圖本證書畫面交作業）。';
+                msg.textContent = '目前為自主練習模式（未綁定 Google Sheet，請截圖本通關證書畫面交給老師）。';
                 return;
             }
-
-            const totalScore = escapeSession.scores.reduce((a, b) => a + b, 0);
-            const fullCorrect = escapeSession.scores.filter(s => s === 20).length;
-
-            const payload = {
-                className: escapeSession.className,
-                seatNumber: escapeSession.seatNumber,
-                studentName: escapeSession.studentName,
-                score: totalScore,
-                correctCount: `${fullCorrect} / 5 關滿分`,
-                timeSpent: escapeSession.elapsedString,
-                details: escapeSession.records.join(' | ')
-            };
 
             try {
                 await fetch(url, {
@@ -1467,30 +1887,50 @@ function doPost(e) {
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
-                escapeSession.submitted = true;
+                gameState.reportSent = true;
                 banner.className = 'p-4 rounded-2xl border text-sm font-bold flex items-center justify-between gap-3 bg-emerald-500/20 border-emerald-400/60 text-emerald-200';
                 icon.textContent = '✅';
-                msg.textContent = `已成功將「${escapeSession.className} ${escapeSession.seatNumber}號 ${escapeSession.studentName}（${totalScore}分）」傳送至老師的 Google Sheet！`;
-                resendBtn.classList.add('hidden');
-            } catch (err) {
+                msg.textContent = `已成功將「${gameState.className} ${gameState.seatNumber}號 ${gameState.studentName}（${totalScore}分）」送出至老師的 Google Sheet！`;
+                retryBtn.classList.add('hidden');
+            } catch (e) {
                 banner.className = 'p-4 rounded-2xl border text-sm font-bold flex items-center justify-between gap-3 bg-rose-500/20 border-rose-400/60 text-rose-200';
                 icon.textContent = '❌';
-                msg.textContent = '成績傳送失敗，請檢查網路後點擊右側「重新傳送」。';
-                resendBtn.classList.remove('hidden');
+                msg.textContent = '成績傳送失敗，請檢查網路後點右側「重新傳送」。';
+                retryBtn.classList.remove('hidden');
+            }
+        }
+
+        async function postPayloadToGas(payload, bannerId) {
+            const url = getConfiguredGasUrl();
+            const banner = document.getElementById(bannerId);
+            if (!url) {
+                banner.textContent = 'ℹ️ 目前為自主練習模式（未綁定 Google Sheet 成績表單）。';
+                return;
+            }
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                banner.textContent = `📤 已將本次挑戰紀錄（${payload.correctCount}）自動回報至老師的 Google Sheet。`;
+            } catch (e) {
+                banner.textContent = '⚠️ 網路連線異常，未能自動回報挑戰紀錄。';
             }
         }
 
         // =========================================================
-        // 6. 隨身岩石圖鑑速查表 ＆ 頁面切換工具
+        // 8. 隨身圖鑑抽屜 ＆ 導覽切換工具
         // =========================================================
-        function buildHandbookContent() {
-            const container = document.getElementById('handbook-body');
-            container.innerHTML = ROCKS_DB.map(r => `
-                <div class="bg-[#162035] p-4 rounded-2xl border border-slate-700 flex flex-col sm:flex-row items-start gap-4">
+        function renderHandbookDrawer() {
+            const list = document.getElementById('handbook-list');
+            list.innerHTML = ROCKS_DB.map(r => `
+                <div class="bg-[#152036] p-4 rounded-2xl border border-slate-700 flex items-start gap-3.5">
                     <div class="w-16 h-16 shrink-0 bg-slate-900 rounded-xl p-1.5 border border-amber-500/30 flex items-center justify-center">
-                        ${missingImagesSet.has(r.id)
-                            ? buildFallbackRockSVG(r.id)
-                            : `<img src="${r.img}" alt="${r.name}" onerror="handleSpecimenImgError(this, '${r.id}')" class="w-full h-full object-contain">`
+                        ${brokenImageIds.has(r.id)
+                            ? createFallbackSVG(r.id)
+                            : `<img src="${r.img}" alt="${r.name}" onerror="onImgLoadError(this, '${r.id}')" class="w-full h-full object-contain">`
                         }
                     </div>
                     <div class="flex-1 space-y-1 text-xs sm:text-sm text-slate-200">
@@ -1506,50 +1946,56 @@ function doPost(e) {
             `).join('');
         }
 
-        function openHandbookModal() {
-            buildHandbookContent();
-            document.getElementById('modal-handbook').classList.remove('hidden');
+        function openHandbookDrawer() {
+            renderHandbookDrawer();
+            document.getElementById('drawer-handbook').classList.remove('hidden');
         }
 
-        function closeHandbookModal() {
-            document.getElementById('modal-handbook').classList.add('hidden');
+        function closeHandbookDrawer() {
+            document.getElementById('drawer-handbook').classList.add('hidden');
         }
 
         function switchMode(mode) {
-            const mView = document.getElementById('mode-museum');
-            const eView = document.getElementById('mode-escape');
-            const mBtn = document.getElementById('nav-museum');
-            const eBtn = document.getElementById('nav-escape');
+            const museumSec = document.getElementById('mode-museum');
+            const escapeSec = document.getElementById('mode-escape');
+            const navM = document.getElementById('nav-museum');
+            const navE = document.getElementById('nav-escape');
 
             if (mode === 'museum') {
-                mView.classList.remove('hidden');
-                eView.classList.add('hidden');
-                mBtn.className = 'px-4 py-2 rounded-xl text-sm sm:text-base font-bold transition-all flex items-center gap-2 bg-amber-500 text-slate-950 shadow-md';
-                eBtn.className = 'px-4 py-2 rounded-xl text-sm sm:text-base font-bold transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800';
+                if (gameState.running) {
+                    gameState.running = false;
+                    clearInterval(gameState.stageTimerId);
+                    clearDangerEffects();
+                }
+                museumSec.classList.remove('hidden');
+                escapeSec.classList.add('hidden');
+                navM.className = 'px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-md';
+                navE.className = 'px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800';
             } else {
-                mView.classList.add('hidden');
-                eView.classList.remove('hidden');
-                eBtn.className = 'px-4 py-2 rounded-xl text-sm sm:text-base font-bold transition-all flex items-center gap-2 bg-amber-500 text-slate-950 shadow-md';
-                mBtn.className = 'px-4 py-2 rounded-xl text-sm sm:text-base font-bold transition-all flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800';
-                updateSheetConnBadge();
+                window.speechSynthesis && window.speechSynthesis.cancel();
+                museumSec.classList.add('hidden');
+                escapeSec.classList.remove('hidden');
+                navE.className = 'px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-md';
+                navM.className = 'px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800';
+                refreshLoginSheetStatus();
             }
         }
 
-        let toastTimer = null;
-        function showToast(text, icon = '💡') {
+        let toastTimeout = null;
+        function showToast(message, icon = '💡') {
             const box = document.getElementById('toast');
-            document.getElementById('toast-text').textContent = text;
+            document.getElementById('toast-text').textContent = message;
             document.getElementById('toast-icon').textContent = icon;
             box.classList.remove('hidden');
-            if (toastTimer) clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
                 box.classList.add('hidden');
-            }, 3500);
+            }, 3400);
         }
 
         window.onload = function () {
-            initMuseumView();
-            updateSheetConnBadge();
+            initMuseum();
+            refreshLoginSheetStatus();
         };
     </script>
 </body>
