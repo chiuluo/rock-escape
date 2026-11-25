@@ -766,6 +766,9 @@ function doPost(e) {
             brokenImageIds.add(rockId);
             if (imgEl && imgEl.parentElement) {
                 imgEl.parentElement.innerHTML = createFallbackSVG(rockId);
+            }
+        }
+
         function buildSpecimenVisualHTML(rock, angleDeg = 0, zoomPct = 100) {
             const rad = angleDeg * Math.PI / 180;
             const zoomFactor = zoomPct / 100;
@@ -895,11 +898,6 @@ function doPost(e) {
             specimenZoomPct = Number(val);
             document.getElementById('zoom-label').textContent = `${specimenZoomPct}%`;
             refreshDetailSpecimenSpin();
-        }
-
-        function refreshDetailSpecimenSpin() {
-            const rock = ROCKS_DB[currentDetailIdx];
-            document.getElementById('detail-specimen-holder').innerHTML = buildSpecimenVisualHTML(rock, spinDegrees);
         }
 
         function startSpinInterval() {
