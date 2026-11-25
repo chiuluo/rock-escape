@@ -19,10 +19,10 @@
                     },
                     colors: {
                         museum: {
-                            bg: '#070B14',
+                            bg: '#080d18',
                             panel: '#0E1525',
                             card: '#152036',
-                            gold: '#D4A853',
+                            gold: '#d4a843',
                             goldLight: '#F4D58D',
                             teal: '#1F7A70'
                         }
@@ -34,7 +34,7 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #070B14;
+            background-color: #080d18;
             color: #F1F5F9;
             overflow-x: hidden;
         }
@@ -127,17 +127,22 @@
             <!-- 雙模式切換按鈕 -->
             <nav class="flex items-center gap-1.5 bg-[#131C31] p-1.5 rounded-2xl border border-slate-700/80">
                 <button id="nav-museum" onclick="switchMode('museum')" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-md">
-                    <span>🏛️</span> <span>岩石探索館（自主學習）</span>
+                    <span>🏛️</span> <span>岩石學習圖鑑</span>
                 </button>
                 <button id="nav-escape" onclick="switchMode('escape')" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
-                    <span>🔐</span> <span>地質密室逃脫（限時挑戰）</span>
+                    <span>🔐</span> <span>密室逃脫大挑戰</span>
                 </button>
             </nav>
 
-            <!-- 教師設定按鈕 -->
-            <button onclick="openTeacherModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/40 text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shadow">
-                <span>⚙️</span> <span>教師/成績表單設定</span>
-            </button>
+            <!-- 右側功能按鈕：音效開關 + 教師設定 -->
+            <div class="flex items-center gap-2">
+                <button id="sound-toggle-btn" onclick="toggleSoundMute()" class="px-3 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-emerald-300 border border-emerald-500/40 text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shadow">
+                    <span id="sound-toggle-icon">🔊</span> <span id="sound-toggle-label">音效開啟</span>
+                </button>
+                <button onclick="openTeacherModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-amber-300 border border-amber-500/40 text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shadow">
+                    <span>⚙️</span> <span>教師/成績表單設定</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -223,22 +228,22 @@
                                 <!-- 標本視覺容器 -->
                                 <div id="detail-specimen-holder" class="w-60 h-60 sm:w-64 sm:h-64 flex items-center justify-center animate-float mt-4"></div>
 
-                                <div class="specimen-shadow w-48 h-5 rounded-full mt-1"></div>
-
-                                <div class="mt-2.5 px-4 py-1 rounded-full bg-[#11192B]/90 border border-slate-700 text-xs text-slate-300 flex items-center gap-2 shadow">
-                                    <span>↔</span> <span>左右拖曳標本或按 ← → 方向鍵旋轉</span>
+                            <!-- 旋轉與放大倍率控制列 -->
+                            <div class="w-full max-w-[420px] mt-3.5 space-y-2.5 bg-[#11192B] px-4 py-3 rounded-2xl border border-slate-800">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <button onclick="toggleAutoSpin()" class="px-3.5 py-1.5 rounded-full border border-amber-500/60 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition">
+                                        <span>↻</span> <span id="spin-status-label">自動旋轉：開</span>
+                                    </button>
+                                    <div class="flex items-center gap-1.5">
+                                        <button onclick="nudgeSpin(-25)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold">↺ 左轉</button>
+                                        <button onclick="nudgeSpin(25)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold">右轉 ↻</button>
+                                        <button onclick="resetSpin()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-bold">重設</button>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <!-- 旋轉控制按鈕列 -->
-                            <div class="w-full max-w-[420px] mt-3.5 flex flex-wrap items-center justify-between gap-2 bg-[#11192B] px-4 py-3 rounded-2xl border border-slate-800">
-                                <button onclick="toggleAutoSpin()" class="px-3.5 py-1.5 rounded-full border border-amber-500/60 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition">
-                                    <span>↻</span> <span id="spin-status-label">自動旋轉：開</span>
-                                </button>
-                                <div class="flex items-center gap-1.5">
-                                    <button onclick="nudgeSpin(-25)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold">↺ 左轉</button>
-                                    <button onclick="nudgeSpin(25)" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold">右轉 ↻</button>
-                                    <button onclick="resetSpin()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-bold">重設</button>
+                                <div class="flex items-center gap-3 pt-1 border-t border-slate-800/80">
+                                    <span class="text-xs font-bold text-slate-400 shrink-0">🔍 放大倍率</span>
+                                    <input type="range" id="zoom-slider" min="80" max="150" value="100" oninput="updateSpecimenZoom(this.value)" class="flex-1 accent-amber-400 cursor-pointer">
+                                    <span id="zoom-label" class="text-xs font-mono font-bold text-amber-300 w-11 text-right">100%</span>
                                 </div>
                             </div>
                         </div>
@@ -761,14 +766,13 @@ function doPost(e) {
             brokenImageIds.add(rockId);
             if (imgEl && imgEl.parentElement) {
                 imgEl.parentElement.innerHTML = createFallbackSVG(rockId);
-            }
-        }
-
-        function buildSpecimenVisualHTML(rock, angleDeg = 0) {
+        function buildSpecimenVisualHTML(rock, angleDeg = 0, zoomPct = 100) {
             const rad = angleDeg * Math.PI / 180;
-            const scaleX = 0.85 + 0.15 * Math.cos(rad);
+            const zoomFactor = zoomPct / 100;
+            const scaleX = (0.85 + 0.15 * Math.cos(rad)) * zoomFactor;
+            const scaleY = zoomFactor;
             const tiltZ = Math.sin(rad) * 9;
-            const styleStr = `transform: scaleX(${scaleX.toFixed(3)}) rotate(${tiltZ.toFixed(2)}deg); transition: transform 0.08s linear;`;
+            const styleStr = `transform: scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)}) rotate(${tiltZ.toFixed(2)}deg); transition: transform 0.08s linear;`;
 
             if (brokenImageIds.has(rock.id)) {
                 return `<div class="w-full h-full flex items-center justify-center" style="${styleStr}">${createFallbackSVG(rock.id)}</div>`;
@@ -787,6 +791,7 @@ function doPost(e) {
         let currentDetailIdx = 0;
         let autoSpinEnabled = true;
         let spinDegrees = 0;
+        let specimenZoomPct = 100;
         let spinLoopId = null;
         let isDraggingRock = false;
         let dragStartX = 0;
@@ -873,6 +878,22 @@ function doPost(e) {
             document.getElementById('detail-uses').textContent = rock.uses;
 
             spinDegrees = 0;
+            specimenZoomPct = 100;
+            const zSlider = document.getElementById('zoom-slider');
+            const zLabel = document.getElementById('zoom-label');
+            if (zSlider) zSlider.value = 100;
+            if (zLabel) zLabel.textContent = '100%';
+            refreshDetailSpecimenSpin();
+        }
+
+        function refreshDetailSpecimenSpin() {
+            const rock = ROCKS_DB[currentDetailIdx];
+            document.getElementById('detail-specimen-holder').innerHTML = buildSpecimenVisualHTML(rock, spinDegrees, specimenZoomPct);
+        }
+
+        function updateSpecimenZoom(val) {
+            specimenZoomPct = Number(val);
+            document.getElementById('zoom-label').textContent = `${specimenZoomPct}%`;
             refreshDetailSpecimenSpin();
         }
 
@@ -905,6 +926,11 @@ function doPost(e) {
 
         function resetSpin() {
             spinDegrees = 0;
+            specimenZoomPct = 100;
+            const zSlider = document.getElementById('zoom-slider');
+            const zLabel = document.getElementById('zoom-label');
+            if (zSlider) zSlider.value = 100;
+            if (zLabel) zLabel.textContent = '100%';
             refreshDetailSpecimenSpin();
         }
 
@@ -973,11 +999,33 @@ function doPost(e) {
         }
 
         // =========================================================
-        // 4. Web Audio API 警報導數音效合成器 (無需外部音檔)
+        // 4. Web Audio API 遊戲音效系統 (受靜音開關控制，無需外部音檔)
         // =========================================================
         let audioCtx = null;
+        let isSoundMuted = false;
+
+        function toggleSoundMute() {
+            isSoundMuted = !isSoundMuted;
+            const btn = document.getElementById('sound-toggle-btn');
+            const icon = document.getElementById('sound-toggle-icon');
+            const label = document.getElementById('sound-toggle-label');
+            if (isSoundMuted) {
+                btn.className = 'px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-700 text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shadow';
+                icon.textContent = '🔇';
+                label.textContent = '靜音';
+                showToast('已切換為靜音模式', '🔇');
+            } else {
+                ensureAudioContext();
+                btn.className = 'px-3 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-emerald-300 border border-emerald-500/40 text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shadow';
+                icon.textContent = '🔊';
+                label.textContent = '音效開啟';
+                playKeyClickSound();
+                showToast('已開啟密室遊戲音效', '🔊');
+            }
+        }
 
         function ensureAudioContext() {
+            if (isSoundMuted) return;
             if (!audioCtx) {
                 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
                 if (AudioContextClass) audioCtx = new AudioContextClass();
@@ -987,57 +1035,88 @@ function doPost(e) {
             }
         }
 
-        function playToneBeep(freq, duration, type = 'sine', gainVal = 0.14) {
+        function playToneBeep(freq, duration, type = 'sine', gainVal = 0.14, delaySec = 0) {
+            if (isSoundMuted) return;
             try {
                 ensureAudioContext();
                 if (!audioCtx) return;
+                const startTime = audioCtx.currentTime + delaySec;
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.001, startTime);
+                gain.gain.linearRampToValueAtTime(gainVal, startTime + 0.015);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
+                osc.start(startTime);
+                osc.stop(startTime + duration + 0.02);
             } catch (e) {}
         }
 
+        // 1) 按鍵點擊音：清脆短促電子回饋音
         function playKeyClickSound() {
-            playToneBeep(680, 0.06, 'triangle', 0.08);
+            playToneBeep(760, 0.055, 'triangle', 0.09, 0);
         }
 
+        // 倒數 30 秒 / 15 秒警報滴答音
         function playWarningTickSound(isCritical) {
             if (isCritical) {
-                playToneBeep(920, 0.14, 'square', 0.12);
+                playToneBeep(960, 0.13, 'square', 0.11, 0);
             } else {
-                playToneBeep(540, 0.08, 'sine', 0.07);
+                playToneBeep(560, 0.08, 'sine', 0.07, 0);
             }
         }
 
+        // 2) 答錯警告音效：低沉雙短音 (Sawtooth)
         function playWrongLockSound() {
-            playToneBeep(165, 0.25, 'sawtooth', 0.18);
-            setTimeout(() => playToneBeep(130, 0.3, 'sawtooth', 0.18), 140);
+            playToneBeep(155, 0.22, 'sawtooth', 0.18, 0);
+            playToneBeep(125, 0.28, 'sawtooth', 0.20, 0.15);
         }
 
+        // 3) 單關解鎖成功音效：明亮上揚電子三和弦 (Do - Mi - Sol - High Do)
         function playUnlockChimeSound() {
-            playToneBeep(523.25, 0.15, 'triangle', 0.15);
-            setTimeout(() => playToneBeep(659.25, 0.15, 'triangle', 0.15), 110);
-            setTimeout(() => playToneBeep(783.99, 0.28, 'triangle', 0.18), 220);
+            playToneBeep(523.25, 0.18, 'triangle', 0.16, 0);     // C5 (Do)
+            playToneBeep(659.25, 0.18, 'triangle', 0.16, 0.09);  // E5 (Mi)
+            playToneBeep(783.99, 0.22, 'triangle', 0.18, 0.18);  // G5 (Sol)
+            playToneBeep(1046.50, 0.36, 'sine', 0.20, 0.28);     // C6 (High Do)
         }
 
+        // 4) 時間到失敗警報音效：沉重下降警報長音 (Lockdown Siren)
         function playLockdownFailSound() {
-            playToneBeep(220, 0.4, 'sawtooth', 0.22);
-            setTimeout(() => playToneBeep(155, 0.45, 'sawtooth', 0.22), 250);
-            setTimeout(() => playToneBeep(110, 0.7, 'sawtooth', 0.25), 520);
+            if (isSoundMuted) return;
+            try {
+                ensureAudioContext();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(340, now);
+                osc.frequency.exponentialRampToValueAtTime(82, now + 1.35);
+                gain.gain.setValueAtTime(0.24, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 1.42);
+            } catch (e) {}
         }
 
+        // 5) 最終全破通關勝利號角：約 1.8 秒輝煌 Fanfare 旋律與和弦共鳴
         function playVictoryFanfareSound() {
-            const notes = [523.25, 659.25, 783.99, 1046.50];
-            notes.forEach((n, idx) => {
-                setTimeout(() => playToneBeep(n, 0.26, 'triangle', 0.18), idx * 130);
-            });
+            // 號角主旋律 (C5 -> E5 -> G5 -> C6 -> G5 -> C6 華麗長和弦)
+            playToneBeep(523.25, 0.22, 'sawtooth', 0.13, 0.00);  // Do
+            playToneBeep(659.25, 0.22, 'sawtooth', 0.13, 0.14);  // Mi
+            playToneBeep(783.99, 0.24, 'sawtooth', 0.14, 0.28);  // Sol
+            playToneBeep(1046.50, 0.36, 'sawtooth', 0.16, 0.44); // High Do
+            playToneBeep(783.99, 0.22, 'triangle', 0.15, 0.72);  // Sol
+            // 終止輝煌大三和弦共鳴 (約 1.8 秒收尾)
+            playToneBeep(523.25, 0.95, 'triangle', 0.14, 0.90);  // C5
+            playToneBeep(659.25, 0.95, 'triangle', 0.14, 0.90);  // E5
+            playToneBeep(783.99, 0.95, 'triangle', 0.14, 0.90);  // G5
+            playToneBeep(1046.50, 1.05, 'sawtooth', 0.16, 0.90); // C6
         }
 
         // =========================================================
@@ -1046,13 +1125,18 @@ function doPost(e) {
         const ESCAPE_STAGES = [
             {
                 stageNum: 1,
-                title: '第 1 關：標本室影像與條紋特徵 3 位數密碼鎖',
-                story: '第一道防爆門掃描器啟動！請觀察下方兩件標本影像與提示，依序輸入正確的【3位數岩石代號】！',
+                title: '第 1 關：三件神秘標本觀察・3 位數密碼鎖',
+                story: '第一道防爆門掃描器啟動！下方展示櫃同時掃描出「第 1 碼、第 2 碼、第 3 碼」三件未知岩石標本（已隱藏岩名），請觀察三張標本的外觀特徵並對照代號表，依序輸入【3位數密碼】！',
                 lockType: 'digits',
                 codeLength: 3,
-                answer: '946',
-                specimenHintId: 'gneiss',
+                answer: '104',
+                specimenHints: [
+                    { label: '第 1 碼標本', rockId: 'andesite', sub: '火成岩 • 深灰色斑狀' },
+                    { label: '第 2 碼標本', rockId: 'schist', sub: '變質岩 • 綠灰漂亮紋路' },
+                    { label: '第 3 碼標本', rockId: 'limestone', sub: '沉積岩 • 白灰紅塊狀' }
+                ],
                 legend: [
+                    { code: '0', name: '片岩' },
                     { code: '1', name: '安山岩' },
                     { code: '2', name: '花岡岩' },
                     { code: '3', name: '玄武岩' },
@@ -1064,19 +1148,19 @@ function doPost(e) {
                     { code: '9', name: '片麻岩' }
                 ],
                 clues: [
-                    '第 1 碼：如上方標本照所示，呈黑白兩色或暗淡兩色相間隔，形成平行條紋狀排列（片麻岩理）的岩石代號？',
-                    '第 2 碼：大多呈白色、灰色或紅色，可製造水泥、建築材料、化工與農業原料的岩石代號？',
-                    '第 3 碼：主要是白色、青灰色或黃色，用手觸摸有類似「砂紙粗糙感」的岩石代號？'
+                    '🔍 第 1 碼標本：大多呈深灰色（也有紅、綠、黑、白等色），分布在大陸邊緣如臺灣、日本、安地列斯山脈，可做寺廟龍柱。',
+                    '🔍 第 2 碼標本：呈白色、綠色、灰色或黑色；因較容易破裂成片狀剝落，較少做建築材料，但顏色和紋路漂亮可做觀賞用。',
+                    '🔍 第 3 碼標本：大多呈白色、灰色或紅色，分布在高雄大岡山、壽山、屏東恆春與小琉球，可製造水泥、化工與農業原料。'
                 ],
-                explanation: '第1碼為片麻岩(9)、第2碼為石灰岩(4)、第3碼為砂岩(6)，正確密碼為 946！'
+                explanation: '第1碼標本是安山岩(1)、第2碼標本是片岩(0)、第3碼標本是石灰岩(4)，正確密碼為 104！'
             },
             {
                 stageNum: 2,
-                title: '第 2 關：臺灣地質產地衛星 4 位數密碼鎖',
-                story: '第二道電子門連接著「臺灣產地座標系統」！請依照四個臺灣產地線索，依序輸入【4位數岩石代號】。',
+                title: '第 2 關：三大岩類與產地分類 4 位數密碼鎖',
+                story: '第二道電子門連接著「岩類與臺灣產地分類庫」！請依照火成岩、沉積岩、變質岩與產地線索，依序輸入【4位數岩石代號】。',
                 lockType: 'digits',
                 codeLength: 4,
-                answer: '3278',
+                answer: '2581',
                 legend: [
                     { code: '1', name: '安山岩' },
                     { code: '2', name: '花岡岩' },
@@ -1088,71 +1172,71 @@ function doPost(e) {
                     { code: '8', name: '板岩' }
                 ],
                 clues: [
-                    '第 1 碼：臺灣分布最廣的地區是「澎湖群島」，桃園角板山、新竹關西等地也有分布。',
-                    '第 2 碼：臺灣本島出現地點很少，而「金門與馬祖」部分則是由此岩石構成。',
-                    '第 3 碼：主要出現在宜蘭縣蘇澳鎮到花蓮縣秀林鄉的蘇花公路沿線，是製造水泥和石灰的原料。',
-                    '第 4 碼：主要分布在中央山脈及雪山山脈地區，大多數「海拔三千公尺以上的高山」均由它組成。'
+                    '第 1 碼（火成岩）：呈灰白色或粉紅色，臺灣本島出現地點很少，金門與馬祖部分由此岩石構成。',
+                    '第 2 碼（沉積岩）：大多為青灰色或黑色，具有一層一層細微的頁理構造，可用來製造磚瓦和陶瓷。',
+                    '第 3 碼（變質岩）：呈深灰色或黑色的板狀，主要分布在中央山脈及雪山山脈，原住民常蓋成石板屋。',
+                    '第 4 碼（火成岩）：大多分布在大陸邊緣（如南美洲安地列斯山脈、北美洲洛磯山脈、臺灣與日本等地）。'
                 ],
-                explanation: '澎湖群島(玄武岩=3)、金門馬祖(花岡岩=2)、蘇花公路水泥原料(大理岩=7)、三千公尺高山(板岩=8)，密碼為 3278！'
+                explanation: '花岡岩(2)、頁岩(5)、板岩(8)、安山岩(1)，正確分類密碼為 2581！'
             },
             {
                 stageNum: 3,
-                title: '第 3 關：觸感與構造鑑識・中文名稱文字密碼鎖',
-                story: '第三道安全門啟用了「中文聲紋與文字辨識鎖」！請根據線索，使用下方中文字鍵盤（或直接打字）輸入正確的【岩石名稱】。',
+                title: '第 3 關：離島地質與用途鑑識・中文名稱文字密碼鎖',
+                story: '第三道安全門啟用了「中文名稱辨識鎖」！請根據下方三大線索比對，使用中文字鍵盤（或直接輸入）填入正確的【岩石名稱】。',
                 lockType: 'text',
-                placeholder: '請點擊下方文字鍵或輸入岩石名稱',
-                answer: '頁岩',
+                placeholder: '請點擊下方岩石銘牌或輸入名稱',
+                answer: '花岡岩',
                 wordKeys: ['安山岩', '花岡岩', '玄武岩', '石灰岩', '頁岩', '砂岩', '大理岩', '板岩', '片麻岩', '片岩'],
                 clues: [
-                    '線索 A：外觀大多為青灰色或黑色。',
-                    '線索 B：用手觸摸「沒有粗糙的感覺」，具有一層一層細微的構造。',
-                    '線索 C：臺灣的西部麓山帶、西部丘陵及東部海岸山脈都有分布，可用來「製造磚瓦和陶瓷」。'
+                    '線索 A（外觀）：呈灰白色或粉紅色。',
+                    '線索 B（產地對比）：不同於分布最廣在澎湖群島的玄武岩，也不同於高山板岩；此岩石在臺灣本島出現地點很少，而「金門與馬祖」部分則是由它構成！',
+                    '線索 C（用途）：可做建築材料，例如寺廟的龍柱、石牆和石獅，現代建築中的地磚和牆壁的石板。'
                 ],
-                explanation: '具有一層一層細微頁理構造、摸起來不粗糙且可用來製造磚瓦與陶瓷的是「頁岩」！'
+                explanation: '呈灰白色或粉紅色、構成金門與馬祖部分地質，且常用於寺廟石牆、石獅與現代建築石板的是「花岡岩」！'
             },
             {
                 stageNum: 4,
-                title: '第 4 關：生活用途與岩性特徵 3 位數密碼鎖',
-                story: '第四道金庫門的「用途特徵鎖」已啟動！請對照岩石代號表，解開三個生活用途與外觀謎題。',
+                title: '第 4 關：岩性紋理與觸感 3 位數密碼鎖',
+                story: '第四道金庫門的「岩性觸感鎖」已啟動！請對照岩石代號表，辨別平行條紋與砂紙觸感特徵。',
                 lockType: 'digits',
                 codeLength: 3,
-                answer: '604',
+                answer: '906',
                 legend: [
                     { code: '0', name: '片岩' },
-                    { code: '2', name: '花岡岩' },
-                    { code: '4', name: '石灰岩' },
+                    { code: '3', name: '玄武岩' },
+                    { code: '5', name: '頁岩' },
                     { code: '6', name: '砂岩' },
-                    { code: '8', name: '板岩' }
+                    { code: '9', name: '片麻岩' }
                 ],
                 clues: [
-                    '第 1 碼：用手觸摸有類似「砂紙的粗糙感」，可作為建築材料，也可從中提煉「石英」作為各種用途。',
-                    '第 2 碼：呈白色、綠色、灰色或黑色；因較容易破裂成片狀剝落，故較少做建築材料，但顏色紋路漂亮「可做觀賞用」。',
-                    '第 3 碼：主要分布在「高雄市的大岡山、小岡山、半屏山、壽山」、屏東恆春、小琉球等地，可製造水泥。'
+                    '第 1 碼：呈黑白兩色或暗淡兩色相間隔，形成平行的條紋狀排列（稱為「片麻岩理」）的岩石代號？',
+                    '第 2 碼：容易破裂成片狀剝落、較少做建築材料，但顏色和紋路漂亮「可做觀賞用」的岩石代號？',
+                    '第 3 碼：主要是白色、青灰色或黃色，用手觸摸有類似「砂紙的粗糙感」，也可從中提煉石英的岩石代號？'
                 ],
-                explanation: '提煉石英與砂紙粗糙感(砂岩=6)、較少做建材可做觀賞用(片岩=0)、高雄大岡山與壽山(石灰岩=4)，密碼為 604！'
+                explanation: '片麻岩理(片麻岩=9)、觀賞用片狀剝落(片岩=0)、砂紙粗糙感與提煉石英(砂岩=6)，密碼為 906！'
             },
             {
                 stageNum: 5,
                 title: '第 5 關：終極逃生主控門 4 位數總決戰密碼鎖',
-                story: '這是最後一道通往地面的逃生大門！結合火山岩與變質岩的綜合線索，輸入最終【4位數主控密碼】！',
+                story: '這是最後一道通往地面的逃生大門！結合臺灣代表性岩石產地與用途特徵，輸入最終【4位數主控密碼】！',
                 lockType: 'digits',
                 codeLength: 4,
-                answer: '1870',
+                answer: '7384',
                 legend: [
                     { code: '0', name: '片岩' },
                     { code: '1', name: '安山岩' },
                     { code: '3', name: '玄武岩' },
-                    { code: '5', name: '頁岩' },
+                    { code: '4', name: '石灰岩' },
                     { code: '7', name: '大理岩' },
                     { code: '8', name: '板岩' }
                 ],
                 clues: [
-                    '第 1 碼：大多分布在大陸邊緣（如南美洲安地列斯山脈、臺灣、日本），可做「寺廟的龍柱、石雕、墓碑、地磚」。',
-                    '第 2 碼：呈深灰色或黑色的板狀，山區原住民經常用來蓋成「石板屋」，史前人類也常製成「石刀」。',
-                    '第 3 碼：呈白色、灰色或黑色，出現在蘇花公路沿線，可做建築材料及「桌椅、花瓶」等雕刻用石材。',
-                    '第 4 碼：出現在蘇花公路沿線與附近山區，容易破裂成片狀剝落，顏色和紋路漂亮可做觀賞用。'
+                    '第 1 碼：主要出現在宜蘭縣蘇澳鎮到花蓮縣秀林鄉的蘇花公路沿線，是製造水泥和石灰的原料，也可做桌椅、花瓶等雕刻石材。',
+                    '第 2 碼：呈黑色、暗灰色、褐色、暗紅色、墨綠色，臺灣分布最廣的地區是「澎湖群島」。',
+                    '第 3 碼：主要分布在中央山脈及雪山山脈地區，大多數海拔三千公尺以上的高山均由此種板狀岩石組成。',
+                    '第 4 碼：主要分布在高雄大岡山、半屏山、壽山、屏東恆春與小琉球，可製造水泥、建築材料、化工與農業原料。'
                 ],
-                explanation: '安山岩(1)、板岩(8)、大理岩(7)、片岩(0)，最終主控密碼為 1870！恭喜成功逃脫！'
+                explanation: '大理岩(7)、玄武岩(3)、板岩(8)、石灰岩(4)，最終主控密碼為 7384！恭喜成功逃脫！'
             }
         ];
 
@@ -1316,19 +1400,31 @@ function doPost(e) {
             const currentPotentialPts = gameState.stageScores[gameState.stageIdx];
 
             let specimenPreviewHtml = '';
-            if (st.specimenHintId) {
-                const rockObj = ROCKS_DB.find(r => r.id === st.specimenHintId);
+            if (st.specimenHints && st.specimenHints.length > 0) {
                 specimenPreviewHtml = `
-                    <div class="bg-[#152036] p-4 rounded-2xl border border-amber-500/40 flex flex-col sm:flex-row items-center gap-4">
-                        <div class="w-28 h-28 shrink-0 rounded-xl specimen-stage border border-amber-400/50 p-2 flex items-center justify-center">
-                            ${brokenImageIds.has(rockObj.id)
-                                ? createFallbackSVG(rockObj.id)
-                                : `<img src="${rockObj.img}" alt="未知標本影像" onerror="onImgLoadError(this, '${rockObj.id}')" class="max-h-full max-w-full object-contain">`
-                            }
+                    <div class="bg-[#152036] p-4 rounded-2xl border border-amber-500/40 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-xs font-black">🔍 現場掃描三件未知標本證物（依序對應第 1～3 碼）</span>
+                            <span class="text-[11px] text-slate-400 hidden sm:inline">觀察外觀顏色與紋理</span>
                         </div>
-                        <div class="space-y-1 text-center sm:text-left">
-                            <span class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-xs font-bold">🔍 現場掃描標本證物</span>
-                            <p class="text-sm text-slate-200 font-bold">觀察這件岩石標本的外觀紋理，找出它在下方代號表中的數字！</p>
+                        <div class="grid grid-cols-3 gap-2.5 sm:gap-4">
+                            ${st.specimenHints.map((item, idx) => {
+                                const rockObj = ROCKS_DB.find(r => r.id === item.rockId);
+                                return `
+                                    <div class="bg-slate-950/90 rounded-2xl p-2.5 sm:p-3 border border-amber-400/50 flex flex-col items-center text-center space-y-1.5 shadow-inner">
+                                        <span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black text-xs">
+                                            ${item.label}
+                                        </span>
+                                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl specimen-stage border border-slate-800 p-1.5 flex items-center justify-center">
+                                            ${brokenImageIds.has(rockObj.id)
+                                                ? createFallbackSVG(rockObj.id)
+                                                : `<img src="${rockObj.img}" alt="${item.label}" onerror="onImgLoadError(this, '${rockObj.id}')" class="max-h-full max-w-full object-contain">`
+                                            }
+                                        </div>
+                                        <span class="text-[11px] font-bold text-slate-300 leading-tight">${item.sub}</span>
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                 `;
@@ -1571,10 +1667,10 @@ function doPost(e) {
                     }
                 }, 1350);
             } else {
-                // 密碼錯誤！震動紅燈並扣 3 分（最低保留 8 分）
+                // 密碼錯誤！震動紅燈並扣 3 分（最低保留 10 分）
                 playWrongLockSound();
                 gameState.stageAttempts[idx]++;
-                gameState.stageScores[idx] = Math.max(8, gameState.stageScores[idx] - 3);
+                gameState.stageScores[idx] = Math.max(10, gameState.stageScores[idx] - 3);
 
                 const lockBox = document.getElementById('lock-mechanism-box');
                 if (lockBox) {
