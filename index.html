@@ -38,7 +38,6 @@
       overflow-x: hidden;
     }
 
-    /* 緊急警告畫面特效 */
     body.warn-amber {
       box-shadow: inset 0 0 0 6px rgba(245, 158, 11, 0.55);
     }
@@ -64,7 +63,6 @@
       animation: shakeLock 0.38s ease;
     }
 
-    /* 頂部導覽列 */
     header.topbar {
       position: sticky;
       top: 0;
@@ -194,7 +192,6 @@
       display: block;
     }
 
-    /* 課本三大岩類成因總覽 */
     .textbook-banner {
       background: linear-gradient(135deg, rgba(20, 36, 64, 0.95), rgba(12, 23, 43, 0.95));
       border: 1px solid rgba(234, 179, 8, 0.35);
@@ -254,7 +251,6 @@
       color: #cbd5e1;
     }
 
-    /* 分類篩選列 */
     .filter-bar {
       display: flex;
       flex-wrap: wrap;
@@ -286,7 +282,6 @@
       border-color: var(--gold);
     }
 
-    /* 展示櫃網格 */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -459,7 +454,6 @@
       color: var(--text-muted);
     }
 
-    /* 右側說明欄 */
     .detail-info-col {
       display: flex;
       flex-direction: column;
@@ -519,7 +513,6 @@
       place-items: center;
     }
 
-    /* 密室逃脫專區 */
     .escape-setup-card {
       max-width: 680px;
       margin: 0 auto;
@@ -580,7 +573,6 @@
       margin-bottom: 6px;
     }
 
-    /* 關卡進行中 HUD */
     .hud-bar {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -649,7 +641,6 @@
       transition: width 0.25s linear;
     }
 
-    /* 關卡主體與密碼鎖 */
     .stage-workspace {
       display: grid;
       grid-template-columns: 1.25fr 0.95fr;
@@ -734,37 +725,7 @@
       font-size: 0.92rem;
     }
 
-    .code-reference {
-      margin-top: 14px;
-      background: rgba(7, 13, 25, 0.75);
-      border: 1px dashed rgba(234, 179, 8, 0.45);
-      border-radius: 12px;
-      padding: 12px;
-    }
-
-    .code-reference-title {
-      font-size: 0.82rem;
-      color: #fde047;
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .ref-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .ref-chip {
-      font-size: 0.8rem;
-      padding: 4px 9px;
-      border-radius: 8px;
-      background: #132340;
-      border: 1px solid var(--border-subtle);
-      color: #e2e8f0;
-    }
-
-    /* 密碼鎖輸入區 */
+    /* 完整 0~9 數字鍵盤 */
     .lock-screen {
       background: #060b14;
       border: 2px solid rgba(56, 189, 248, 0.5);
@@ -826,6 +787,10 @@
       background: #1e3661;
     }
 
+    .key-btn.key-zero {
+      grid-column: 1 / -1;
+    }
+
     .char-chips {
       display: flex;
       flex-wrap: wrap;
@@ -848,7 +813,6 @@
       gap: 10px;
     }
 
-    /* 震撼失敗與通關畫面 */
     .outcome-box {
       max-width: 700px;
       margin: 12px auto;
@@ -911,7 +875,6 @@
       color: #fef08a;
     }
 
-    /* 隨身圖鑑 Modal */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -1062,7 +1025,6 @@
       </div>
 
       <div class="detail-layout">
-        <!-- 左側：標本展示箱 -->
         <div class="detail-stage-box">
           <div id="stageViewport" class="stage-viewport" title="拖曳或按左右方向鍵旋轉">
             <img id="detailImg" src="" alt="岩石標本" />
@@ -1085,7 +1047,6 @@
           </div>
         </div>
 
-        <!-- 右側：文字說明與語音導覽 -->
         <div class="detail-info-col">
           <div class="detail-title-card">
             <div>
@@ -1132,11 +1093,10 @@
 
     <!-- ==================== 視圖 3：密室逃脫挑戰 ==================== -->
     <section id="escapeView" class="view-section">
-      <!-- 3A. 開始前填寫資料與規則 -->
       <div id="escapeIntro" class="escape-setup-card">
         <h2>🔐 地質實驗室：密室逃脫挑戰</h2>
         <p style="color:#cbd5e1; font-size:0.94rem;">
-          實驗室安全門已鎖上！請運用觀察力與課本知識解開所有密碼鎖。每位同學的<strong>關卡順序</strong>與<strong>密碼數字</strong>都會隨機重組，無法靠背別人的答案過關。
+          實驗室安全門已鎖上！請運用觀察力與課本知識解開所有密碼鎖。每位同學的<strong>關卡順序</strong>與<strong>密碼數字</strong>都會隨機產生，無法靠背別人的答案過關。
         </p>
 
         <div class="form-grid">
@@ -1165,7 +1125,6 @@
         </button>
       </div>
 
-      <!-- 3B. 闖關進行中畫面 -->
       <div id="escapePlay" style="display:none;">
         <div class="hud-bar">
           <div class="hud-stats">
@@ -1188,7 +1147,6 @@
         </div>
 
         <div class="stage-workspace">
-          <!-- 左側：謎題線索區 -->
           <div class="puzzle-panel">
             <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px;">
               <span id="stageTypeTag" class="textbook-tag"></span>
@@ -1199,10 +1157,8 @@
 
             <div id="stageSpecimens" class="triple-specimens" style="display:none;"></div>
             <div id="stageClues" class="clue-list"></div>
-            <div id="stageCodeRef" class="code-reference" style="display:none;"></div>
           </div>
 
-          <!-- 右側：密碼鎖輸入區 -->
           <div class="lock-panel">
             <h3 style="font-size:1.08rem; color:#7dd3fc; margin-bottom:10px;">🔑 電子密碼鎖輸入</h3>
 
@@ -1222,12 +1178,10 @@
         </div>
       </div>
 
-      <!-- 3C. 失敗或過關結算畫面 -->
       <div id="escapeOutcome" style="display:none;"></div>
     </section>
   </main>
 
-  <!-- 隨身圖鑑 Modal -->
   <div id="pocketModal" class="modal-backdrop">
     <div class="modal-card">
       <div class="modal-head">
@@ -1238,7 +1192,6 @@
     </div>
   </div>
 
-  <!-- 教師成績設定 Modal -->
   <div id="settingsModal" class="modal-backdrop">
     <div class="modal-card">
       <div class="modal-head">
@@ -1293,7 +1246,6 @@ function doPost(e) {
     (function () {
       "use strict";
 
-      /* ==================== 10 種岩石資料庫 ==================== */
       const ROCKS_DB = [
         {
           id: "andesite",
@@ -1397,7 +1349,6 @@ function doPost(e) {
         }
       ];
 
-      /* ==================== 音效系統（Web Audio API） ==================== */
       const SoundFX = (() => {
         let ctx = null;
         let muted = false;
@@ -1466,7 +1417,6 @@ function doPost(e) {
         };
       })();
 
-      /* ==================== 彩帶動畫 ==================== */
       const ConfettiFX = (() => {
         const canvas = document.getElementById("confettiCanvas");
         const ctx = canvas.getContext("2d");
@@ -1528,7 +1478,6 @@ function doPost(e) {
         return { launch, stop };
       })();
 
-      /* ==================== 輔助工具 ==================== */
       function shuffle(arr) {
         const copy = arr.slice();
         for (let i = copy.length - 1; i > 0; i--) {
@@ -1553,23 +1502,19 @@ function doPost(e) {
         return `${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
       }
 
-      /* ==================== 隨機題目產生器（避免直接透漏答案字詞） ==================== */
+      /* ==================== 隨機題目產生器（不提供對照表，靠觀察與推理解鎖） ==================== */
       function buildRandomizedSessionStages() {
-        // 1. 觀察標本辨識鎖（3 碼數字，密碼與線索每次隨機）
         const s1Items = shuffle([
           {
             rockId: "andesite",
-            slotLabel: "第一組線索",
             clue: "火成岩之一，常可見斑晶顆粒，寺廟龍柱與石雕常見建材"
           },
           {
             rockId: "schist",
-            slotLabel: "第二組線索",
             clue: "變質岩之一，片狀紋理與光澤明顯，因易沿片狀剝落較少作大型結構建材"
           },
           {
             rockId: "limestone",
-            slotLabel: "第三組線索",
             clue: "沉積岩之一，高雄壽山與小琉球常見，是製造水泥的重要原料"
           }
         ]);
@@ -1579,37 +1524,20 @@ function doPost(e) {
           type: "數字密碼鎖・標本觀察",
           mode: "digits",
           title: "地質標本室・三組觀察鎖",
-          story: "觀察三張標本照片與線索，將每組對應的「岩石代號」依序輸入密碼鎖。",
+          story: "觀察三張標本照片與線索，推敲並輸入 3 位密碼解開門鎖。",
           specimens: s1Items.map((it, idx) => ({
             rock: getRockById(it.rockId),
             label: `標本 ${idx + 1}`
           })),
-          clues: s1Items.map((it, idx) => `第 ${idx + 1} 碼（${it.slotLabel}）：${it.clue}`),
-          codeMap: s1Items.map((it, idx) => ({
-            code: s1Digits[idx],
-            rockName: getRockById(it.rockId).name
-          })),
+          clues: s1Items.map((it, idx) => `線索 ${idx + 1}：${it.clue}`),
           answer: s1Digits.join("")
         };
 
-        // 2. 課本成因推理鎖（4 碼數字，線索順序與數字每次隨機）
         const s2Items = shuffle([
-          {
-            clue: "岩漿侵入地殼或熔岩流出地表冷卻凝固而成的岩石類別",
-            label: "火成岩"
-          },
-          {
-            clue: "地表岩石碎屑與土壤經風化、侵蝕、搬運、沉積、壓密形成的岩石類別",
-            label: "沉積岩"
-          },
-          {
-            clue: "地底岩石受高溫、高壓改變原來結構或組織後形成的岩石類別",
-            label: "變質岩"
-          },
-          {
-            clue: "由細小泥質顆粒沉積壓密而成，觸感較細滑且具細微薄層構造的岩石",
-            label: "頁岩"
-          }
+          "岩漿侵入地殼或熔岩流出地表冷卻凝固而成的岩石類別（火成岩）",
+          "地表岩石碎屑與土壤經風化、侵蝕、搬運、沉積、壓密形成的岩石類別（沉積岩）",
+          "地底岩石受高溫、高壓改變原來結構或組織後形成的岩石類別（變質岩）",
+          "由細小泥質顆粒沉積壓密而成，觸感較細滑且具細微薄層構造的岩石（頁岩）"
         ]);
         const s2Digits = pickRandomDigits(4);
         const stage2 = {
@@ -1617,16 +1545,11 @@ function doPost(e) {
           type: "數字密碼鎖・課本成因",
           mode: "digits",
           title: "地層研究室・成因推演鎖",
-          story: "根據課本對岩石形成原因的說明，將四條線索對應的項目代號依序輸入。",
-          clues: s2Items.map((it, idx) => `第 ${idx + 1} 碼線索：${it.clue}`),
-          codeMap: s2Items.map((it, idx) => ({
-            code: s2Digits[idx],
-            rockName: it.label
-          })),
+          story: "根據課本對岩石形成原因的說明，推敲並輸入 4 位數字密碼。",
+          clues: s2Items.map((c, idx) => `線索 ${idx + 1}：${c}`),
           answer: s2Digits.join("")
         };
 
-        // 3. 課本地景與特徵文字鎖（每次隨機抽 1 題，題幹不出現答案名稱）
         const s3Pool = [
           {
             story: "海岸地景檔案顯示，連江縣龜島與金、馬部分地區常見此種火成岩，多呈灰白色或粉紅色且顆粒明顯，寺廟石獅與龍柱常選用它。",
@@ -1659,20 +1582,10 @@ function doPost(e) {
           answer: pickedS3.answer
         };
 
-        // 4. 紋理與觸感辨識鎖（3 碼數字，每次隨機）
         const s4Items = shuffle([
-          {
-            clue: "表面顆粒明顯，用手觸摸具有粗糙顆粒感的沉積岩，可提煉石英",
-            label: "砂岩"
-          },
-          {
-            clue: "在蘇花公路沿線可見，呈現黑白或暗淡兩色相間的平行條紋構造",
-            label: "片麻岩"
-          },
-          {
-            clue: "主要分布在蘇花公路沿線，由石灰岩受高溫高壓變質而成，可製水泥與花瓶",
-            label: "大理岩"
-          }
+          "表面顆粒明顯，用手觸摸具有粗糙顆粒感的沉積岩，可提煉石英",
+          "在蘇花公路沿線可見，呈現黑白或暗淡兩色相間的平行條紋構造",
+          "主要分布在蘇花公路沿線，由石灰岩受高溫高壓變質而成，可製水泥與花瓶"
         ]);
         const s4Digits = pickRandomDigits(3);
         const stage4 = {
@@ -1680,29 +1593,15 @@ function doPost(e) {
           type: "數字密碼鎖・紋理觸感",
           mode: "digits",
           title: "顯微觀察室・紋理觸感鎖",
-          story: "比對岩石的表面觸感與條紋構造線索，依序輸入三個正確代號。",
-          clues: s4Items.map((it, idx) => `第 ${idx + 1} 碼線索：${it.clue}`),
-          codeMap: s4Items.map((it, idx) => ({
-            code: s4Digits[idx],
-            rockName: it.label
-          })),
+          story: "比對岩石的表面觸感與條紋構造線索，輸入 3 位數字密碼。",
+          clues: s4Items.map((c, idx) => `線索 ${idx + 1}：${c}`),
           answer: s4Digits.join("")
         };
 
-        // 5. 終極逃脫主控鎖（3 碼數字，每次隨機）
         const s5Items = shuffle([
-          {
-            clue: "主要分布在東部海岸山脈與西部麓山帶，細滑不粗糙且具薄層，可製磚瓦陶瓷",
-            label: "頁岩"
-          },
-          {
-            clue: "在蘇花公路沿線可見，因易沿片狀剝落較少作大型建築，但花紋具觀賞價值",
-            label: "片岩"
-          },
-          {
-            clue: "火成岩之一，常呈深灰色，也可見紅、綠、黑、白等顏色，寺廟龍柱常見",
-            label: "安山岩"
-          }
+          "主要分布在東部海岸山脈與西部麓山帶，細滑不粗糙且具薄層，可製磚瓦陶瓷",
+          "在蘇花公路沿線可見，因易沿片狀剝落較少作大型建築，但花紋具觀賞價值",
+          "火成岩之一，常呈深灰色，也可見紅、綠、黑、白等顏色，寺廟龍柱常見"
         ]);
         const s5Digits = pickRandomDigits(3);
         const stage5 = {
@@ -1710,20 +1609,15 @@ function doPost(e) {
           type: "終極主控鎖・綜合推理",
           mode: "digits",
           title: "安全出口大門・最終主控鎖",
-          story: "最後一道關卡！整合產地與用途線索，輸入三碼終極密碼開啟逃生門。",
-          clues: s5Items.map((it, idx) => `第 ${idx + 1} 碼線索：${it.clue}`),
-          codeMap: s5Items.map((it, idx) => ({
-            code: s5Digits[idx],
-            rockName: it.label
-          })),
+          story: "最後一道關卡！整合產地與用途線索，輸入 3 位數字密碼開啟逃生門。",
+          clues: s5Items.map((c, idx) => `線索 ${idx + 1}：${c}`),
           answer: s5Digits.join("")
         };
 
         return shuffle([stage1, stage2, stage3, stage4, stage5]);
       }
 
-      /* ==================== 應用程式狀態 ==================== */
-      const STAGE_SECONDS = 120; // 每題限時 2 分鐘
+      const STAGE_SECONDS = 120;
       const PENALTY_PER_WRONG = 3;
 
       const state = {
@@ -1746,7 +1640,6 @@ function doPost(e) {
         gasUrl: ""
       };
 
-      /* ==================== DOM 元素參照 ==================== */
       const el = {
         tabGalleryBtn: document.getElementById("tabGalleryBtn"),
         tabEscapeBtn: document.getElementById("tabEscapeBtn"),
@@ -1798,7 +1691,6 @@ function doPost(e) {
         stageStory: document.getElementById("stageStory"),
         stageSpecimens: document.getElementById("stageSpecimens"),
         stageClues: document.getElementById("stageClues"),
-        stageCodeRef: document.getElementById("stageCodeRef"),
 
         lockScreen: document.getElementById("lockScreen"),
         lockInput: document.getElementById("lockInput"),
@@ -1821,7 +1713,6 @@ function doPost(e) {
         settingsStatus: document.getElementById("settingsStatus")
       };
 
-      /* ==================== 視圖切換與語音 ==================== */
       function clearDangerClasses() {
         document.body.classList.remove("warn-amber", "warn-red");
         el.timerBox.classList.remove("amber", "red");
@@ -1847,7 +1738,6 @@ function doPost(e) {
         window.speechSynthesis.speak(utter);
       }
 
-      /* ==================== 圖鑑渲染 ==================== */
       function renderGallery() {
         const list = state.activeFilter === "全部"
           ? ROCKS_DB
@@ -1916,7 +1806,6 @@ function doPost(e) {
         `).join("");
       }
 
-      /* ==================== 密室逃脫計時與關卡 ==================== */
       function stopTimer() {
         if (state.timerId) {
           clearInterval(state.timerId);
@@ -1963,7 +1852,7 @@ function doPost(e) {
       function buildNumberKeypad() {
         const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"];
         el.numKeypad.innerHTML = keys.map(k =>
-          `<button class="key-btn" data-key="${k}" type="button">${k}</button>`
+          `<button class="key-btn ${k === "0" ? "key-zero" : ""}" data-key="${k}" type="button">${k}</button>`
         ).join("");
         el.numKeypad.querySelectorAll(".key-btn").forEach(btn => {
           btn.addEventListener("click", () => {
@@ -1987,7 +1876,6 @@ function doPost(e) {
         el.stageTitle.textContent = stage.title;
         el.stageStory.textContent = stage.story;
 
-        // 標本圖片區
         if (stage.specimens && stage.specimens.length > 0) {
           el.stageSpecimens.style.display = "grid";
           el.stageSpecimens.innerHTML = stage.specimens.map(sp => `
@@ -2001,25 +1889,15 @@ function doPost(e) {
           el.stageSpecimens.innerHTML = "";
         }
 
-        // 線索清單
         el.stageClues.innerHTML = stage.clues.map(c =>
           `<div class="clue-item">${c}</div>`
         ).join("");
 
-        // 代號提示卡（僅數字鎖顯示）
-        if (stage.mode === "digits" && stage.codeMap) {
-          el.stageCodeRef.style.display = "block";
-          el.stageCodeRef.innerHTML = `
-            <div class="code-reference-title">本關可用密碼數字（順序已隨機洗牌）：</div>
-            <div class="ref-chips">
-              ${shuffle(stage.codeMap).map(m => `<span class="ref-chip">數字「${m.code}」＝ ${m.rockName}</span>`).join("")}
-            </div>
-          `;
+        if (stage.mode === "digits") {
           el.numKeypad.style.display = "grid";
           el.charKeypad.style.display = "none";
           el.lockInput.placeholder = `輸入 ${stage.answer.length} 位密碼`;
         } else {
-          el.stageCodeRef.style.display = "none";
           el.numKeypad.style.display = "none";
           el.charKeypad.style.display = "flex";
           el.lockInput.placeholder = "輸入岩石名稱";
@@ -2182,7 +2060,6 @@ function doPost(e) {
         submitScoreToSheets("通關成功");
       }
 
-      /* ==================== Google Sheets 成績傳送 ==================== */
       function initGasUrl() {
         const params = new URLSearchParams(window.location.search);
         const fromQuery = params.get("sheetUrl");
@@ -2226,7 +2103,6 @@ function doPost(e) {
           });
       }
 
-      /* ==================== 事件綁定 ==================== */
       function bindEvents() {
         el.tabGalleryBtn.addEventListener("click", () => {
           SoundFX.click();
@@ -2358,7 +2234,6 @@ function doPost(e) {
           }
         });
 
-        // 隨身圖鑑 Modal
         el.openPocketGuideBtn.addEventListener("click", () => {
           SoundFX.click();
           renderPocketGuide();
@@ -2370,7 +2245,6 @@ function doPost(e) {
           el.pocketModal.classList.remove("open");
         });
 
-        // 教師設定 Modal
         el.settingsBtn.addEventListener("click", () => {
           SoundFX.click();
           el.gasUrlInput.value = state.gasUrl;
@@ -2426,7 +2300,6 @@ function doPost(e) {
         });
       }
 
-      /* ==================== 初始化 ==================== */
       initGasUrl();
       buildNumberKeypad();
       renderGallery();
