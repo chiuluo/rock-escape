@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>岩石探索館 × 地質密室逃脫大挑戰</title>
+  <title>礦物探索館 × 地質密室逃脫大挑戰</title>
   <style>
     :root {
       --bg-deep: #070d19;
       --bg-card: #0f1b30;
       --bg-panel: #142440;
       --gold: #eab308;
-      --gold-soft: rgba(234, 179, 8, 0.22);
       --cyan: #38bdf8;
       --emerald: #10b981;
       --amber: #f59e0b;
@@ -224,29 +223,28 @@
       border: 1px solid rgba(56, 189, 248, 0.35);
     }
 
-    .rock-types-grid {
+    .mineral-notes-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 12px;
     }
 
-    .rock-type-card {
+    .mineral-note-card {
       background: rgba(7, 13, 25, 0.65);
       border-radius: var(--radius-md);
       padding: 12px 14px;
-      border-left: 4px solid var(--gold);
+      border-left: 4px solid var(--cyan);
     }
 
-    .rock-type-card.igneous { border-left-color: #f97316; }
-    .rock-type-card.sedimentary { border-left-color: #38bdf8; }
-    .rock-type-card.metamorphic { border-left-color: #34d399; }
+    .mineral-note-card.gold { border-left-color: var(--gold); }
+    .mineral-note-card.emerald { border-left-color: var(--emerald); }
 
-    .rock-type-card h3 {
+    .mineral-note-card h3 {
       font-size: 0.98rem;
       margin-bottom: 4px;
     }
 
-    .rock-type-card p {
+    .mineral-note-card p {
       font-size: 0.85rem;
       color: #cbd5e1;
     }
@@ -345,13 +343,19 @@
       width: fit-content;
     }
 
-    .cat-火成岩 { background: rgba(249, 115, 22, 0.2); color: #fdba74; }
-    .cat-沉積岩 { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; }
-    .cat-變質岩 { background: rgba(52, 211, 153, 0.2); color: #6ee7b7; }
+    .cat-光澤與硬度 { background: rgba(234, 179, 8, 0.2); color: #fde047; }
+    .cat-晶形與紋理 { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; }
+    .cat-造岩礦物 { background: rgba(52, 211, 153, 0.2); color: #6ee7b7; }
 
     .specimen-card h3 {
-      font-size: 1.08rem;
+      font-size: 1.06rem;
       color: #f8fafc;
+    }
+
+    .specimen-card .en-sub {
+      font-size: 0.78rem;
+      color: #7dd3fc;
+      margin-top: -6px;
     }
 
     .specimen-card p {
@@ -363,7 +367,6 @@
       overflow: hidden;
     }
 
-    /* 單件標本詳細檢視：左圖右文並排 */
     .detail-header {
       display: flex;
       flex-wrap: wrap;
@@ -475,6 +478,12 @@
     .detail-title-card h2 {
       font-size: 1.65rem;
       color: #fef08a;
+    }
+
+    .detail-title-card .en-title {
+      font-size: 0.92rem;
+      color: #7dd3fc;
+      margin-left: 8px;
     }
 
     .info-card {
@@ -643,7 +652,7 @@
 
     .stage-workspace {
       display: grid;
-      grid-template-columns: 1.25fr 0.95fr;
+      grid-template-columns: 1.3fr 0.9fr;
       gap: 20px;
       align-items: start;
     }
@@ -713,26 +722,110 @@
     .clue-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       margin-top: 12px;
     }
 
     .clue-item {
-      background: rgba(15, 27, 48, 0.9);
+      background: rgba(15, 27, 48, 0.92);
       border-left: 3px solid var(--cyan);
       padding: 10px 12px;
       border-radius: 8px;
       font-size: 0.92rem;
     }
 
-    /* 完整 0~9 數字鍵盤 */
+    .option-pool-box {
+      margin-top: 16px;
+      background: rgba(7, 13, 25, 0.8);
+      border: 1px solid rgba(234, 179, 8, 0.4);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .option-pool-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .option-pool-title {
+      font-size: 0.88rem;
+      color: #fde047;
+      font-weight: 700;
+    }
+
+    .selected-slots-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .selected-slot-pill {
+      background: #132340;
+      border: 1px dashed rgba(56, 189, 248, 0.55);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 0.84rem;
+      color: #bae6fd;
+    }
+
+    .selected-slot-pill.filled {
+      border-style: solid;
+      border-color: var(--emerald);
+      background: rgba(16, 185, 129, 0.16);
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .option-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+    }
+
+    .choice-card {
+      background: #132340;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 10px;
+      padding: 9px 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .choice-card:hover {
+      background: #1c3460;
+      border-color: var(--gold);
+    }
+
+    .choice-code-badge {
+      display: inline-grid;
+      place-items: center;
+      min-width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, #facc15, #eab308);
+      color: #09111f;
+      font-weight: 800;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
     .lock-screen {
       background: #060b14;
       border: 2px solid rgba(56, 189, 248, 0.5);
       border-radius: 14px;
       padding: 14px;
       text-align: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .lock-screen.error {
@@ -768,43 +861,31 @@
       color: #6ee7b7;
     }
 
+    .digit-selector-label {
+      font-size: 0.82rem;
+      color: #93c5fd;
+      margin-bottom: 6px;
+    }
+
     .keypad-num {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
       margin-bottom: 12px;
     }
 
     .key-btn {
-      padding: 13px;
-      font-size: 1.15rem;
-      font-weight: 700;
+      padding: 11px 0;
+      font-size: 1.1rem;
+      font-weight: 800;
       background: #132340;
-      border: 1px solid var(--border-subtle);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      color: #fef08a;
     }
 
     .key-btn:hover {
       background: #1e3661;
-    }
-
-    .key-btn.key-zero {
-      grid-column: 1 / -1;
-    }
-
-    .char-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 12px;
-    }
-
-    .char-chip-btn {
-      padding: 7px 11px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      background: #132340;
-      border: 1px solid rgba(234, 179, 8, 0.35);
-      color: #fef08a;
+      border-color: var(--gold);
     }
 
     .lock-actions {
@@ -962,15 +1043,15 @@
 
   <header class="topbar">
     <div class="brand">
-      <div class="brand-badge">🪨</div>
+      <div class="brand-badge">💎</div>
       <div>
-        <h1>岩石探索館 × 地質密室逃脫</h1>
-        <p>六年級自然・地表組成與認識岩石（每關限時 2 分鐘・隨機防作弊）</p>
+        <h1>礦物探索館 × 地質密室逃脫</h1>
+        <p>六年級自然・3-2 認識礦物（每關限時 2 分鐘・六種礦物全覆蓋）</p>
       </div>
     </div>
 
     <div class="nav-actions">
-      <button id="tabGalleryBtn" class="btn-nav active" type="button">📖 岩石學習圖鑑</button>
+      <button id="tabGalleryBtn" class="btn-nav active" type="button">📖 礦物學習圖鑑</button>
       <button id="tabEscapeBtn" class="btn-nav" type="button">🔐 密室逃脫挑戰</button>
       <button id="soundToggleBtn" class="btn-ghost" type="button">🔊 音效開啟</button>
       <button id="settingsBtn" class="btn-ghost" type="button">⚙️ 教師成績設定</button>
@@ -978,35 +1059,34 @@
   </header>
 
   <main class="container">
-    <!-- ==================== 視圖 1：岩石學習圖鑑總覽 ==================== -->
     <section id="galleryView" class="view-section active">
       <div class="textbook-banner">
         <div class="textbook-banner-head">
-          <h2>📘 課本重點整理：岩石的種類與形成原因</h2>
-          <span class="textbook-tag">自然課本・地表組成</span>
+          <h2>📘 課本 3-2 礦物重點整理</h2>
+          <span class="textbook-tag">岩石由礦物組成</span>
         </div>
-        <div class="rock-types-grid">
-          <div class="rock-type-card igneous">
-            <h3>🔥 火成岩</h3>
-            <p>岩漿侵入地殼內部冷卻，或流出地表後的熔岩冷卻凝固形成的岩石。代表：安山岩、花岡岩、玄武岩。</p>
+        <div class="mineral-notes-grid">
+          <div class="mineral-note-card gold">
+            <h3>💎 岩石與礦物的關係</h3>
+            <p>同一種或一種以上的礦物組合可形成不同岩石，岩石大多由不同礦物組成，是礦物的集合體。</p>
           </div>
-          <div class="rock-type-card sedimentary">
-            <h3>🌊 沉積岩</h3>
-            <p>地表岩石碎屑、土壤經過風化、侵蝕、搬運、沉積、壓密等作用形成的岩石。代表：石灰岩、頁岩、砂岩。</p>
+          <div class="mineral-note-card">
+            <h3>🔍 觀察礦物的線索</h3>
+            <p>不同礦物在形狀、顏色、光澤、條痕、硬度與觸感上各有特色，部分礦物甚至有特殊氣味。</p>
           </div>
-          <div class="rock-type-card metamorphic">
-            <h3>💎 變質岩</h3>
-            <p>地底的岩石受到高溫、高壓，改變原來結構或組織後形成的岩石。代表：大理岩、板岩、片麻岩（另含片岩）。</p>
+          <div class="mineral-note-card emerald">
+            <h3>🪨 課本代表組合</h3>
+            <p>石灰岩主要由方解石組成；花岡岩則常由長石、黑雲母或白雲母、石英等礦物組成。</p>
           </div>
         </div>
       </div>
 
       <div class="filter-bar">
         <div class="filter-pills" id="categoryFilterBar">
-          <button class="pill active" data-cat="全部" type="button">全部標本（10）</button>
-          <button class="pill" data-cat="火成岩" type="button">火成岩（3）</button>
-          <button class="pill" data-cat="沉積岩" type="button">沉積岩（3）</button>
-          <button class="pill" data-cat="變質岩" type="button">變質岩（4）</button>
+          <button class="pill active" data-cat="全部" type="button">全部礦物（6）</button>
+          <button class="pill" data-cat="光澤與硬度" type="button">光澤與硬度（2）</button>
+          <button class="pill" data-cat="晶形與紋理" type="button">晶形與紋理（2）</button>
+          <button class="pill" data-cat="造岩礦物" type="button">造岩礦物（2）</button>
         </div>
         <button id="jumpEscapeFromGalleryBtn" class="btn-gold" type="button">立即進入密室逃脫 →</button>
       </div>
@@ -1014,7 +1094,6 @@
       <div id="galleryGrid" class="gallery-grid"></div>
     </section>
 
-    <!-- ==================== 視圖 2：單件岩石檢視（左圖右文） ==================== -->
     <section id="detailView" class="view-section">
       <div class="detail-header">
         <button id="backToGalleryBtn" class="btn-ghost" type="button">← 返回展示櫃</button>
@@ -1027,7 +1106,7 @@
       <div class="detail-layout">
         <div class="detail-stage-box">
           <div id="stageViewport" class="stage-viewport" title="拖曳或按左右方向鍵旋轉">
-            <img id="detailImg" src="" alt="岩石標本" />
+            <img id="detailImg" src="" alt="礦物標本" />
           </div>
 
           <div class="stage-controls">
@@ -1051,22 +1130,17 @@
           <div class="detail-title-card">
             <div>
               <span id="detailCatBadge" class="cat-badge"></span>
-              <h2 id="detailName">岩石名稱</h2>
+              <div style="margin-top:4px;">
+                <h2 id="detailName" style="display:inline;">礦物名稱</h2>
+                <span id="detailEnName" class="en-title"></span>
+              </div>
             </div>
             <button id="speakAllBtn" class="btn-gold" type="button">🔊 朗讀完整介紹</button>
           </div>
 
           <div class="info-card">
             <div>
-              <h4>成因與課本地景</h4>
-              <p id="detailFormation"></p>
-            </div>
-            <button class="btn-speak" data-field="formation" title="朗讀成因" type="button">🔈</button>
-          </div>
-
-          <div class="info-card">
-            <div>
-              <h4>外觀特徵</h4>
+              <h4>外觀與性質</h4>
               <p id="detailAppearance"></p>
             </div>
             <button class="btn-speak" data-field="appearance" title="朗讀外觀" type="button">🔈</button>
@@ -1082,7 +1156,7 @@
 
           <div class="info-card">
             <div>
-              <h4>生活與建築用途</h4>
+              <h4>生活與工業用途</h4>
               <p id="detailUsage"></p>
             </div>
             <button class="btn-speak" data-field="usage" title="朗讀用途" type="button">🔈</button>
@@ -1091,12 +1165,11 @@
       </div>
     </section>
 
-    <!-- ==================== 視圖 3：密室逃脫挑戰 ==================== -->
     <section id="escapeView" class="view-section">
       <div id="escapeIntro" class="escape-setup-card">
-        <h2>🔐 地質實驗室：密室逃脫挑戰</h2>
+        <h2>🔐 礦物實驗室：密室逃脫挑戰</h2>
         <p style="color:#cbd5e1; font-size:0.94rem;">
-          實驗室安全門已鎖上！請運用觀察力與課本知識解開所有密碼鎖。每位同學的<strong>關卡順序</strong>與<strong>密碼數字</strong>都會隨機產生，無法靠背別人的答案過關。
+          本回合會涵蓋<strong>石墨、石英、滑石、硫磺、雲母、方解石</strong>六種礦物，並從多組線索中隨機抽題。請依序找出每條線索對應的<strong>答案選項</strong>，查看該選項前的<strong>數字編號</strong>，並在右側密碼鎖填入正確密碼即可解鎖。
         </p>
 
         <div class="form-grid">
@@ -1116,8 +1189,8 @@
 
         <ul class="rules-list">
           <li><strong>每關限時 2 分鐘（02:00）</strong>：倒數歸零會觸發全面封鎖失敗，必須重新開始。</li>
-          <li><strong>必須解鎖才能前往下一關</strong>：輸入正確密碼門鎖才會開啟；答錯會震動並扣 3 分。</li>
-          <li><strong>可隨時查閱隨身圖鑑</strong>：作答時可按「隨身圖鑑」對照岩石特徵與成因。</li>
+          <li><strong>六種礦物皆會出題</strong>：每次挑戰皆包含六種礦物的線索，且題組與選項數字每次隨機洗牌。</li>
+          <li><strong>可隨時查閱隨身圖鑑</strong>：作答時可按「隨身圖鑑」對照礦物特徵與用途；答錯扣 3 分。</li>
         </ul>
 
         <button id="startEscapeBtn" class="btn-gold" style="width:100%; padding:13px; font-size:1.05rem;" type="button">
@@ -1157,6 +1230,15 @@
 
             <div id="stageSpecimens" class="triple-specimens" style="display:none;"></div>
             <div id="stageClues" class="clue-list"></div>
+
+            <div class="option-pool-box">
+              <div class="option-pool-head">
+                <div class="option-pool-title">答案選項池（點選正確選項，將該選項前的「數字」依線索順序填入密碼）：</div>
+                <button id="undoChoiceBtn" class="btn-ghost" type="button" style="padding:4px 10px; font-size:0.8rem;">↩ 退回上一格</button>
+              </div>
+              <div id="selectedSlotsBar" class="selected-slots-bar"></div>
+              <div id="optionCardsGrid" class="option-cards-grid"></div>
+            </div>
           </div>
 
           <div class="lock-panel">
@@ -1167,8 +1249,8 @@
               <div id="lockFeedback" class="lock-feedback"></div>
             </div>
 
+            <div class="digit-selector-label">可選擇的數字鍵（0～9）：</div>
             <div id="numKeypad" class="keypad-num"></div>
-            <div id="charKeypad" class="char-chips" style="display:none;"></div>
 
             <div class="lock-actions">
               <button id="clearLockBtn" class="btn-ghost" type="button">清除重填</button>
@@ -1185,7 +1267,7 @@
   <div id="pocketModal" class="modal-backdrop">
     <div class="modal-card">
       <div class="modal-head">
-        <h3 style="color:#fde047;">📖 隨身岩石圖鑑（10 種標本）</h3>
+        <h3 style="color:#fde047;">📖 隨身礦物圖鑑</h3>
         <button id="closePocketBtn" class="btn-ghost" type="button">✕ 關閉</button>
       </div>
       <div id="pocketGrid" class="pocket-grid"></div>
@@ -1216,7 +1298,7 @@
         若尚未建立後端接收程式，可複製以下 <code>程式碼.gs</code> 貼入 Google 試算表「擴充功能 → Apps Script」並部署為「所有人」可存取：
       </p>
       <textarea class="code-box" readonly>function doGet(e) {
-  return ContentService.createTextOutput("✅ 岩石密室逃脫成績收集服務運作正常！")
+  return ContentService.createTextOutput("✅ 礦物密室逃脫成績收集服務運作正常！")
     .setMimeType(ContentService.MimeType.TEXT);
 }
 
@@ -1246,108 +1328,103 @@ function doPost(e) {
     (function () {
       "use strict";
 
-      const ROCKS_DB = [
+      const MINERALS_DB = [
         {
-          id: "andesite",
-          name: "安山岩",
-          category: "火成岩",
-          img: "images/andesite.png",
-          formation: "屬於火成岩，由岩漿冷卻凝固而成；常出現在板塊交界或火山活動相關地帶。",
-          appearance: "大多呈深灰色，也有紅、綠、黑、白等顏色，常可見斑晶顆粒。",
-          origin: "常見於大陸邊緣與環太平洋火山帶，如臺灣、日本、菲律賓、印尼等地。",
-          usage: "可作建築材料，例如寺廟龍柱、石雕、墓碑與地磚等。"
+          id: "graphite",
+          name: "石墨",
+          enName: "Graphite",
+          category: "光澤與硬度",
+          img: "images/Graphite.png",
+          appearance: "外形呈葉片狀、鱗片狀、塊狀或粒狀。黑色，硬度 1～2，比重 2.23，具金屬光澤，條痕黑色。",
+          origin: "中央山脈古第三紀石英岩與黑色板岩、雪山山脈板岩區及石英岩區、花蓮太魯閣至臺東卑南石墨片岩區、宜蘭礁溪／頭城／南澳、南投埔里／魚池／仁愛霧社。",
+          usage: "可做坩堝、電池電極、顏料與潤滑劑，也是鉛筆筆心的主要原料。"
         },
         {
-          id: "granite",
-          name: "花岡岩",
-          category: "火成岩",
-          img: "images/granite.png",
-          formation: "屬於火成岩，由岩漿在地下深處緩慢冷卻凝固形成，顆粒較明顯。",
-          appearance: "多呈灰白色或粉紅色，具有明顯的結晶顆粒。",
-          origin: "臺灣本島較少見，連江縣龜島以及金門、馬祖部分地區由它構成。",
-          usage: "常用於建築材料、寺廟龍柱、石牆、石獅與現代地磚或壁材。"
+          id: "quartz",
+          name: "石英",
+          enName: "Quartz",
+          category: "晶形與紋理",
+          img: "images/Quartz.png",
+          appearance: "外形呈六角柱狀，兩端常為六角錐。透明無色、紫色、粉紅色、褐、黃色或乳白色，具玻璃光澤，條痕白色。",
+          origin: "臺灣各地碎屑沉積岩（礫岩、砂岩、粉砂岩、頁岩）皆含石英；宜蘭南澳粉烏林、中央山脈與東部變質岩區、南投集集大山、新北瑞芳九份與金瓜石。",
+          usage: "可用於石英鐘錶、壓力計、光學儀器、玻璃、飾品與寶石等。"
         },
         {
-          id: "basalt",
-          name: "玄武岩",
-          category: "火成岩",
-          img: "images/basalt.png",
-          formation: "屬於火成岩，由噴發出的熔岩冷卻凝固形成，冷卻時常收縮形成柱狀節理。",
-          appearance: "多為黑色、暗灰色、褐色、暗紅色或墨綠色，質地緻密或帶氣孔。",
-          origin: "澎湖群島分布最廣，桃園角板山、新竹關西、新北三峽與土城等地也可見。",
-          usage: "常用作建築材料、雕刻用石材與墓碑。"
+          id: "talc",
+          name: "滑石",
+          enName: "Talc",
+          category: "光澤與硬度",
+          img: "images/Talc.png",
+          appearance: "外形呈板狀或塊狀，蘋果綠色、灰色、白色或銀白色，具珍珠或油脂光澤，條痕白色，觸感滑順。",
+          origin: "花蓮壽豐鄉豐田、花蓮秀林鄉西林、花蓮秀林鄉中橫公路晴岡（又名慈恩）。",
+          usage: "可作爽身粉、顏料、肥皂、紙張、去汙粉、橡膠、化妝品、殺蟲劑與陶瓷原料。"
         },
         {
-          id: "limestone",
-          name: "石灰岩",
-          category: "沉積岩",
-          img: "images/limestone.png",
-          formation: "屬於沉積岩，由海洋生物遺骸或碳酸鈣沉積物經沉積、壓密作用形成。",
-          appearance: "大多呈白色、灰色或紅色，遇稀酸易冒泡（具碳酸鈣成分）。",
-          origin: "高雄壽山、大岡山、小岡山、半屏山，以及恆春、東北角、小琉球、澎湖等地。",
-          usage: "是製造水泥的重要原料，也可用於建築材料、化工與農業原料。"
+          id: "sulfur",
+          name: "硫磺",
+          enName: "Sulfur",
+          category: "晶形與紋理",
+          img: "images/Sulfur.png",
+          appearance: "外形呈錐體，也常見不規則塊體或針狀。多為黃色，含雜質時可呈綠、灰或紅色，松脂光澤，條痕白色。",
+          origin: "臺北大屯火山區大油坑、小油坑、大磺嘴、四磺坪、庚子坪與冷水坑；新北瑞芳金瓜石及宜蘭頭城龜山島。",
+          usage: "可用來製造硫酸、硫化氫、炸藥、火柴與鞭炮、肥料、殺蟲劑、煉油、橡膠與輪胎。"
         },
         {
-          id: "shale",
-          name: "頁岩",
-          category: "沉積岩",
-          img: "images/shale.png",
-          formation: "屬於沉積岩，由細小的泥質顆粒經過沉積與壓密作用形成。",
-          appearance: "多為青灰色或黑色，觸摸時較細滑不粗糙，具有一層層細微的薄層構造。",
-          origin: "沉積岩分布區常見，如西部麓山帶、西部丘陵與東部海岸山脈。",
-          usage: "可用來製造磚瓦和陶瓷。"
+          id: "mica",
+          name: "雲母",
+          enName: "Mica",
+          category: "造岩礦物",
+          img: "images/Mica.png",
+          appearance: "呈六方或菱形的板狀、片狀或柱狀晶形，具明顯層狀片理；課本中常見黑雲母與白雲母。",
+          origin: "廣泛分布於亞洲、非洲與美洲，也是花岡岩等岩石的重要組成礦物之一。",
+          usage: "廣泛應用於建材、消防、滅火劑、電焊條、塑膠、電絕緣、造紙、瀝青紙、橡膠與珠光顏料等化工工業。"
         },
         {
-          id: "sandstone",
-          name: "砂岩",
-          category: "沉積岩",
-          img: "images/sandstone.png",
-          formation: "屬於沉積岩，由砂粒大小碎屑經過風化、侵蝕、搬運、沉積與壓密膠結而成。",
-          appearance: "多為白色、青灰色或黃色，表面顆粒明顯，觸感粗糙。",
-          origin: "西部麓山帶、西部丘陵與東部海岸山脈等沉積岩分布地區皆可見。",
-          usage: "可作為建築材料，也可提煉石英供工業與科技用途。"
-        },
-        {
-          id: "marble",
-          name: "大理岩",
-          category: "變質岩",
-          img: "images/marble.png",
-          formation: "屬於變質岩，由地底的石灰岩受到高溫與高壓作用，改變原有結構與結晶而成。",
-          appearance: "呈白色、灰色或黑色，常帶有深淺交錯的花紋。",
-          origin: "臺灣主要分布在宜蘭蘇澳到花蓮秀林的蘇花公路沿線一帶。",
-          usage: "是製造水泥與石灰的原料，也常製成建築石材、桌椅、花瓶與雕刻品。"
-        },
-        {
-          id: "slate",
-          name: "板岩",
-          category: "變質岩",
-          img: "images/slate.png",
-          formation: "屬於變質岩，由頁岩等細粒沉積岩受到高溫、高壓變質作用形成。",
-          appearance: "呈深灰色或黑色板狀，容易沿著平整面劈開成薄板。",
-          origin: "主要分布在中央山脈與雪山山脈地區，許多高山皆由它組成。",
-          usage: "山區原住民常作為建築材料蓋成石板屋，史前時期也用來製作石刀等工具。"
-        },
-        {
-          id: "gneiss",
-          name: "片麻岩",
-          category: "變質岩",
-          img: "images/gneiss.png",
-          formation: "屬於變質岩，由地底岩石經強烈高溫高壓變質，使礦物重新排列成條帶狀。",
-          appearance: "呈白色、灰色或肉紅色，具有黑白或暗淡兩色相間的平行條紋構造。",
-          origin: "主要分布在宜蘭蘇澳至花蓮秀林的蘇花公路沿線與附近山區。",
-          usage: "可作為建築與鋪路材料。"
-        },
-        {
-          id: "schist",
-          name: "片岩",
-          category: "變質岩",
-          img: "images/schist.png",
-          formation: "屬於變質岩，由地底岩石受高溫高壓作用變質形成，片狀礦物排列明顯。",
-          appearance: "呈白色、綠色、灰色或黑色，具有明顯片狀紋理與光澤。",
-          origin: "宜蘭蘇澳到花蓮秀林的蘇花公路沿線與附近山區可見。",
-          usage: "因易沿片狀剝落，較少作大型建築結構，但花紋與色澤具觀賞價值。"
+          id: "calcite",
+          name: "方解石",
+          enName: "Calcite",
+          category: "造岩礦物",
+          img: "images/Calcite.png",
+          appearance: "常見乳白色或透明、半透明晶體與顆粒狀，是組成石灰岩的主要礦物。",
+          origin: "分布於石灰岩與大理岩地區，如高雄壽山、恆春、東北角與蘇花公路沿線石灰岩層。",
+          usage: "是石灰岩的主要成分，與建築材料、水泥與工業原料密切相關。"
         }
       ];
+
+      const CLUE_BANK_BY_MINERAL = {
+        graphite: [
+          { clue: "黑色，硬度僅 1～2，具金屬光澤與黑色條痕，常用作鉛筆筆心與電池電極", showMineralId: "graphite" },
+          { clue: "耐高溫可製成坩堝，也能用作潤滑劑與顏料，花蓮太魯閣至臺東一帶亦有分布", showMineralId: "graphite" },
+          { clue: "外形可呈葉片狀、鱗片狀或塊狀，條痕呈黑色，是鉛筆筆心的主要原料", showMineralId: "graphite" }
+        ],
+        quartz: [
+          { clue: "外形常呈六角柱狀、兩端六角錐，具玻璃光澤與白色條痕，可用於石英鐘錶與玻璃", showMineralId: "quartz" },
+          { clue: "常見於臺灣各地碎屑沉積岩，也見於集集大山、九份與金瓜石，可製光學儀器與飾品", showMineralId: "quartz" },
+          { clue: "顏色多變（透明無色、乳白、紫、粉紅等），具玻璃光澤，也是花岡岩的常見組成礦物之一", showMineralId: "quartz" }
+        ],
+        talc: [
+          { clue: "蘋果綠、灰或銀白色，珍珠或油脂光澤，觸感滑順，可作爽身粉與陶瓷原料", showMineralId: "talc" },
+          { clue: "花蓮壽豐豐田、秀林西林與中橫晴岡一帶可見，常製成爽身粉、肥皂與化妝品原料", showMineralId: "talc" },
+          { clue: "外形呈板狀或塊狀，白色條痕，可用於造紙、去汙粉、橡膠與陶瓷工業", showMineralId: "talc" }
+        ],
+        sulfur: [
+          { clue: "多呈黃色（含雜質可呈綠、灰或紅），具松脂光澤與白色條痕，可製火藥、火柴與肥料", showMineralId: "sulfur" },
+          { clue: "臺北大屯火山區大油坑、小油坑與宜蘭龜山島可見，可用來製造硫酸、殺蟲劑與輪胎", showMineralId: "sulfur" },
+          { clue: "外形可呈錐體、不規則塊體或針狀，具松脂光澤，與火山活動及硫酸製造關係密切", showMineralId: "sulfur" }
+        ],
+        mica: [
+          { clue: "呈六方或菱形的板狀、片狀或柱狀晶形，具明顯層狀片理，可用於電絕緣與滅火劑", showMineralId: "mica" },
+          { clue: "課本中常見黑雲母與白雲母，也是花岡岩的重要組成礦物之一，可作珠光顏料與建材", showMineralId: "mica" },
+          { clue: "具片狀層理與耐火電絕緣特性，廣泛應用於電焊條、塑膠、電絕緣與化工工業", showMineralId: "mica" }
+        ],
+        calcite: [
+          { clue: "常見乳白色或晶體形態，是組成石灰岩的主要礦物，與建築與水泥原料密切相關", showMineralId: "calcite" },
+          { clue: "課本觀察石灰岩時常見的乳白色顆粒狀礦物，分布於石灰岩與大理岩地區", showMineralId: "calcite" },
+          { clue: "石灰岩主要由這種礦物組成，與建築材料、水泥與工業原料關係密切", showMineralId: "calcite" }
+        ]
+      };
+
+      const ALL_MINERAL_LABELS = ["石墨", "石英", "滑石", "硫磺", "雲母", "方解石"];
 
       const SoundFX = (() => {
         let ctx = null;
@@ -1487,12 +1564,8 @@ function doPost(e) {
         return copy;
       }
 
-      function pickRandomDigits(count) {
-        return shuffle(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]).slice(0, count);
-      }
-
-      function getRockById(id) {
-        return ROCKS_DB.find(r => r.id === id) || ROCKS_DB[0];
+      function getMineralById(id) {
+        return MINERALS_DB.find(m => m.id === id) || MINERALS_DB[0];
       }
 
       function formatSeconds(sec) {
@@ -1502,117 +1575,149 @@ function doPost(e) {
         return `${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
       }
 
-      /* ==================== 隨機題目產生器（不提供對照表，靠觀察與推理解鎖） ==================== */
+      function assignRandomOptionCodes(optionLabels) {
+        const digits = shuffle(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
+        const shuffledLabels = shuffle(optionLabels);
+        return shuffledLabels.map((label, idx) => ({
+          label,
+          code: digits[idx]
+        }));
+      }
+
+      function pickClueForMineral(mineralId) {
+        const list = CLUE_BANK_BY_MINERAL[mineralId] || [];
+        return shuffle(list)[0];
+      }
+
+      function makeStageObject(config) {
+        const shuffledPairs = shuffle(config.pairs);
+        const optionPool = assignRandomOptionCodes(config.allOptionLabels);
+        const answerCode = shuffledPairs.map(pair => {
+          const found = optionPool.find(o => o.label === pair.targetLabel);
+          return found ? found.code : "0";
+        }).join("");
+
+        return {
+          id: config.id,
+          type: config.type,
+          title: config.title,
+          story: config.story,
+          specimens: config.showSpecimens
+            ? shuffledPairs.map((pair, idx) => ({
+                mineral: getMineralById(pair.mineralId),
+                label: `標本 ${idx + 1}`
+              }))
+            : [],
+          clues: shuffledPairs.map((pair, idx) => `線索 ${idx + 1}：${pair.clue}`),
+          clueCount: shuffledPairs.length,
+          optionPool,
+          answer: answerCode
+        };
+      }
+
       function buildRandomizedSessionStages() {
-        const s1Items = shuffle([
+        const allSixIds = shuffle(["graphite", "quartz", "talc", "sulfur", "mica", "calcite"]);
+
+        const groupAIds = allSixIds.slice(0, 3);
+        const groupBIds = allSixIds.slice(3, 6);
+
+        const stage1 = makeStageObject({
+          id: "stage_group_a",
+          type: "3 位密碼鎖・礦物辨識 A 組",
+          title: "礦物標本室・第一道鎖",
+          story: "依序找出線索 1～3 對應的礦物選項，查看選項前的數字編號，組合成 3 位密碼！",
+          showSpecimens: true,
+          pairs: groupAIds.map(id => {
+            const m = getMineralById(id);
+            const picked = pickClueForMineral(id);
+            return {
+              mineralId: id,
+              targetLabel: m.name,
+              clue: picked.clue
+            };
+          }),
+          allOptionLabels: ALL_MINERAL_LABELS
+        });
+
+        const stage2 = makeStageObject({
+          id: "stage_group_b",
+          type: "3 位密碼鎖・礦物辨識 B 組",
+          title: "地質研究室・第二道鎖",
+          story: "本組包含另外三種礦物的線索，依序點選正確礦物選項，組合成 3 位密碼！",
+          showSpecimens: false,
+          pairs: groupBIds.map(id => {
+            const m = getMineralById(id);
+            const picked = pickClueForMineral(id);
+            return {
+              mineralId: id,
+              targetLabel: m.name,
+              clue: picked.clue
+            };
+          }),
+          allOptionLabels: ALL_MINERAL_LABELS
+        });
+
+        const mixedFourIds = shuffle(allSixIds).slice(0, 4);
+        const stage3 = makeStageObject({
+          id: "stage_mixed_4",
+          type: "4 位密碼鎖・跨礦物交叉比對",
+          title: "鑑定實驗室・第三道鎖",
+          story: "依序比對四條跨礦物線索，點選對應的礦物選項，組合成 4 位密碼！",
+          showSpecimens: false,
+          pairs: mixedFourIds.map(id => {
+            const m = getMineralById(id);
+            const picked = pickClueForMineral(id);
+            return {
+              mineralId: id,
+              targetLabel: m.name,
+              clue: picked.clue
+            };
+          }),
+          allOptionLabels: ALL_MINERAL_LABELS
+        });
+
+        const textbookPairs = shuffle([
           {
-            rockId: "andesite",
-            clue: "火成岩之一，常可見斑晶顆粒，寺廟龍柱與石雕常見建材"
+            targetLabel: "方解石",
+            clue: "課本 3-2 觀察石灰岩時常見的乳白色顆粒狀礦物，是石灰岩的主要組成礦物"
           },
           {
-            rockId: "schist",
-            clue: "變質岩之一，片狀紋理與光澤明顯，因易沿片狀剝落較少作大型結構建材"
+            targetLabel: "石英",
+            clue: "外形呈六角柱狀、兩端六角錐，具玻璃光澤，也常見於花岡岩與沉積岩中"
           },
           {
-            rockId: "limestone",
-            clue: "沉積岩之一，高雄壽山與小琉球常見，是製造水泥的重要原料"
+            targetLabel: "雲母",
+            clue: "具板狀或片狀層理，課本中常見黑雲母與白雲母，亦為花岡岩組成礦物之一"
           }
         ]);
-        const s1Digits = pickRandomDigits(3);
-        const stage1 = {
-          id: "observe_3code",
-          type: "數字密碼鎖・標本觀察",
-          mode: "digits",
-          title: "地質標本室・三組觀察鎖",
-          story: "觀察三張標本照片與線索，推敲並輸入 3 位密碼解開門鎖。",
-          specimens: s1Items.map((it, idx) => ({
-            rock: getRockById(it.rockId),
-            label: `標本 ${idx + 1}`
-          })),
-          clues: s1Items.map((it, idx) => `線索 ${idx + 1}：${it.clue}`),
-          answer: s1Digits.join("")
-        };
+        const stage4 = makeStageObject({
+          id: "stage_textbook_combo",
+          type: "3 位密碼鎖・課本 3-2 組合",
+          title: "岩石觀察室・第四道鎖",
+          story: "結合課本「3-2 礦物」與岩石組成重點，依序點選正確選項組成 3 位密碼！",
+          showSpecimens: false,
+          pairs: textbookPairs,
+          allOptionLabels: ALL_MINERAL_LABELS
+        });
 
-        const s2Items = shuffle([
-          "岩漿侵入地殼或熔岩流出地表冷卻凝固而成的岩石類別（火成岩）",
-          "地表岩石碎屑與土壤經風化、侵蝕、搬運、沉積、壓密形成的岩石類別（沉積岩）",
-          "地底岩石受高溫、高壓改變原來結構或組織後形成的岩石類別（變質岩）",
-          "由細小泥質顆粒沉積壓密而成，觸感較細滑且具細微薄層構造的岩石（頁岩）"
-        ]);
-        const s2Digits = pickRandomDigits(4);
-        const stage2 = {
-          id: "formation_4code",
-          type: "數字密碼鎖・課本成因",
-          mode: "digits",
-          title: "地層研究室・成因推演鎖",
-          story: "根據課本對岩石形成原因的說明，推敲並輸入 4 位數字密碼。",
-          clues: s2Items.map((c, idx) => `線索 ${idx + 1}：${c}`),
-          answer: s2Digits.join("")
-        };
-
-        const s3Pool = [
-          {
-            story: "海岸地景檔案顯示，連江縣龜島與金、馬部分地區常見此種火成岩，多呈灰白色或粉紅色且顆粒明顯，寺廟石獅與龍柱常選用它。",
-            clues: ["線索：屬於火成岩，外觀多為灰白色或粉紅色，連江縣龜島常見。"],
-            answer: "花岡岩",
-            choices: ["花岡岩", "玄武岩", "安山岩", "石灰岩", "板岩", "大理岩"]
-          },
-          {
-            story: "澎湖群島海岸留有壯觀的六角柱狀節理地景，主要由深色或黑色、具氣孔或緻密質地的火成岩構成，也常用作墓碑與雕刻石材。",
-            clues: ["線索：澎湖分布最廣的火成岩，多呈黑色或暗灰色。"],
-            answer: "玄武岩",
-            choices: ["玄武岩", "花岡岩", "砂岩", "頁岩", "片麻岩", "片岩"]
-          },
-          {
-            story: "中央山脈與雪山山脈許多高山由它組成，呈深灰色或黑色板狀，容易沿平整面劈開，山區原住民曾用來蓋石板屋，史前也製成石刀。",
-            clues: ["線索：變質岩之一，深灰色或黑色板狀，高山與石板屋常見。"],
-            answer: "板岩",
-            choices: ["板岩", "頁岩", "大理岩", "片麻岩", "安山岩", "石灰岩"]
-          }
-        ];
-        const pickedS3 = shuffle(s3Pool)[0];
-        const stage3 = {
-          id: "landmark_text",
-          type: "文字銘牌鎖・課本地景",
-          mode: "text",
-          title: "野外踏查室・地景銘牌鎖",
-          story: pickedS3.story,
-          clues: pickedS3.clues,
-          charChoices: shuffle(pickedS3.choices),
-          answer: pickedS3.answer
-        };
-
-        const s4Items = shuffle([
-          "表面顆粒明顯，用手觸摸具有粗糙顆粒感的沉積岩，可提煉石英",
-          "在蘇花公路沿線可見，呈現黑白或暗淡兩色相間的平行條紋構造",
-          "主要分布在蘇花公路沿線，由石灰岩受高溫高壓變質而成，可製水泥與花瓶"
-        ]);
-        const s4Digits = pickRandomDigits(3);
-        const stage4 = {
-          id: "texture_3code",
-          type: "數字密碼鎖・紋理觸感",
-          mode: "digits",
-          title: "顯微觀察室・紋理觸感鎖",
-          story: "比對岩石的表面觸感與條紋構造線索，輸入 3 位數字密碼。",
-          clues: s4Items.map((c, idx) => `線索 ${idx + 1}：${c}`),
-          answer: s4Digits.join("")
-        };
-
-        const s5Items = shuffle([
-          "主要分布在東部海岸山脈與西部麓山帶，細滑不粗糙且具薄層，可製磚瓦陶瓷",
-          "在蘇花公路沿線可見，因易沿片狀剝落較少作大型建築，但花紋具觀賞價值",
-          "火成岩之一，常呈深灰色，也可見紅、綠、黑、白等顏色，寺廟龍柱常見"
-        ]);
-        const s5Digits = pickRandomDigits(3);
-        const stage5 = {
-          id: "master_3code",
-          type: "終極主控鎖・綜合推理",
-          mode: "digits",
+        const finalThreeIds = shuffle(allSixIds).slice(0, 3);
+        const stage5 = makeStageObject({
+          id: "stage_final_3",
+          type: "3 位終極主控鎖・綜合抽測",
           title: "安全出口大門・最終主控鎖",
-          story: "最後一道關卡！整合產地與用途線索，輸入 3 位數字密碼開啟逃生門。",
-          clues: s5Items.map((c, idx) => `線索 ${idx + 1}：${c}`),
-          answer: s5Digits.join("")
-        };
+          story: "最後一道關卡！依序找出線索 1～3 對應的礦物選項，輸入 3 位密碼開啟大門！",
+          showSpecimens: false,
+          pairs: finalThreeIds.map(id => {
+            const m = getMineralById(id);
+            const picked = pickClueForMineral(id);
+            return {
+              mineralId: id,
+              targetLabel: m.name,
+              clue: picked.clue
+            };
+          }),
+          allOptionLabels: ALL_MINERAL_LABELS
+        });
 
         return shuffle([stage1, stage2, stage3, stage4, stage5]);
       }
@@ -1622,7 +1727,7 @@ function doPost(e) {
 
       const state = {
         activeFilter: "全部",
-        currentRockIndex: 0,
+        currentIndex: 0,
         tilt: 0,
         zoom: 100,
         yaw: 0,
@@ -1632,6 +1737,7 @@ function doPost(e) {
         student: { className: "", seatNumber: "", studentName: "" },
         stages: [],
         stageIndex: 0,
+        pickedChoices: [],
         score: 100,
         remainingSec: STAGE_SECONDS,
         totalElapsedSec: 0,
@@ -1664,7 +1770,7 @@ function doPost(e) {
         resetViewBtn: document.getElementById("resetViewBtn"),
         detailCatBadge: document.getElementById("detailCatBadge"),
         detailName: document.getElementById("detailName"),
-        detailFormation: document.getElementById("detailFormation"),
+        detailEnName: document.getElementById("detailEnName"),
         detailAppearance: document.getElementById("detailAppearance"),
         detailOrigin: document.getElementById("detailOrigin"),
         detailUsage: document.getElementById("detailUsage"),
@@ -1691,12 +1797,14 @@ function doPost(e) {
         stageStory: document.getElementById("stageStory"),
         stageSpecimens: document.getElementById("stageSpecimens"),
         stageClues: document.getElementById("stageClues"),
+        undoChoiceBtn: document.getElementById("undoChoiceBtn"),
+        selectedSlotsBar: document.getElementById("selectedSlotsBar"),
+        optionCardsGrid: document.getElementById("optionCardsGrid"),
 
         lockScreen: document.getElementById("lockScreen"),
         lockInput: document.getElementById("lockInput"),
         lockFeedback: document.getElementById("lockFeedback"),
         numKeypad: document.getElementById("numKeypad"),
-        charKeypad: document.getElementById("charKeypad"),
         clearLockBtn: document.getElementById("clearLockBtn"),
         submitLockBtn: document.getElementById("submitLockBtn"),
 
@@ -1740,20 +1848,21 @@ function doPost(e) {
 
       function renderGallery() {
         const list = state.activeFilter === "全部"
-          ? ROCKS_DB
-          : ROCKS_DB.filter(r => r.category === state.activeFilter);
+          ? MINERALS_DB
+          : MINERALS_DB.filter(m => m.category === state.activeFilter);
 
-        el.galleryGrid.innerHTML = list.map(rock => {
-          const idx = ROCKS_DB.findIndex(r => r.id === rock.id);
+        el.galleryGrid.innerHTML = list.map(item => {
+          const idx = MINERALS_DB.findIndex(m => m.id === item.id);
           return `
             <article class="specimen-card" data-index="${idx}">
               <div class="specimen-thumb">
                 <span class="code-tag">#${String(idx + 1).padStart(2, "0")}</span>
-                <img src="${rock.img}" alt="${rock.name}" loading="lazy" />
+                <img src="${item.img}" alt="${item.name}" loading="lazy" />
               </div>
-              <span class="cat-badge cat-${rock.category}">${rock.category}</span>
-              <h3>${rock.name}</h3>
-              <p>${rock.formation}</p>
+              <span class="cat-badge cat-${item.category}">${item.category}</span>
+              <h3>${item.name}</h3>
+              <div class="en-sub">${item.enName}</div>
+              <p>${item.appearance}</p>
             </article>
           `;
         }).join("");
@@ -1774,36 +1883,55 @@ function doPost(e) {
       }
 
       function openDetail(index) {
-        state.currentRockIndex = (index + ROCKS_DB.length) % ROCKS_DB.length;
-        const rock = ROCKS_DB[state.currentRockIndex];
+        state.currentIndex = (index + MINERALS_DB.length) % MINERALS_DB.length;
+        const item = MINERALS_DB[state.currentIndex];
         state.tilt = 0;
         state.zoom = 100;
         state.yaw = 0;
         el.tiltSlider.value = 0;
         el.zoomSlider.value = 100;
 
-        el.detailImg.src = rock.img;
-        el.detailImg.alt = rock.name;
-        el.detailName.textContent = rock.name;
-        el.detailCatBadge.className = `cat-badge cat-${rock.category}`;
-        el.detailCatBadge.textContent = rock.category;
-        el.detailFormation.textContent = rock.formation;
-        el.detailAppearance.textContent = rock.appearance;
-        el.detailOrigin.textContent = rock.origin;
-        el.detailUsage.textContent = rock.usage;
+        el.detailImg.src = item.img;
+        el.detailImg.alt = item.name;
+        el.detailName.textContent = item.name;
+        el.detailEnName.textContent = item.enName;
+        el.detailCatBadge.className = `cat-badge cat-${item.category}`;
+        el.detailCatBadge.textContent = item.category;
+        el.detailAppearance.textContent = item.appearance;
+        el.detailOrigin.textContent = item.origin;
+        el.detailUsage.textContent = item.usage;
 
         applySpecimenTransform();
         showView("detail");
       }
 
       function renderPocketGuide() {
-        el.pocketGrid.innerHTML = ROCKS_DB.map(r => `
+        el.pocketGrid.innerHTML = MINERALS_DB.map(m => `
           <div class="pocket-item">
-            <strong>${r.name}</strong> <span class="cat-badge cat-${r.category}" style="margin-left:4px;">${r.category}</span>
-            <p style="margin-top:4px; color:#cbd5e1;">${r.appearance}</p>
-            <p style="margin-top:3px; color:#94a3b8;">產地：${r.origin}</p>
+            <strong>${m.name}</strong> <span style="color:#7dd3fc; font-size:0.78rem;">(${m.enName})</span>
+            <p style="margin-top:4px; color:#cbd5e1;">${m.appearance}</p>
+            <p style="margin-top:3px; color:#94a3b8;">用途：${m.usage}</p>
           </div>
         `).join("");
+      }
+
+      function renderSelectedSlots(stage) {
+        const count = stage.clueCount;
+        const pills = [];
+        for (let i = 0; i < count; i++) {
+          const picked = state.pickedChoices[i];
+          if (picked) {
+            pills.push(
+              `<span class="selected-slot-pill filled">線索 ${i + 1} → ${picked.label}（密碼：${picked.code}）</span>`
+            );
+          } else {
+            pills.push(
+              `<span class="selected-slot-pill">線索 ${i + 1} → 待選擇</span>`
+            );
+          }
+        }
+        el.selectedSlotsBar.innerHTML = pills.join("");
+        el.lockInput.value = state.pickedChoices.map(p => p.code).join("");
       }
 
       function stopTimer() {
@@ -1850,14 +1978,18 @@ function doPost(e) {
       }
 
       function buildNumberKeypad() {
-        const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"];
+        const keys = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
         el.numKeypad.innerHTML = keys.map(k =>
-          `<button class="key-btn ${k === "0" ? "key-zero" : ""}" data-key="${k}" type="button">${k}</button>`
+          `<button class="key-btn" data-key="${k}" type="button">${k}</button>`
         ).join("");
         el.numKeypad.querySelectorAll(".key-btn").forEach(btn => {
           btn.addEventListener("click", () => {
             SoundFX.click();
-            el.lockInput.value += btn.dataset.key;
+            const stage = state.stages[state.stageIndex];
+            const maxLen = stage ? stage.answer.length : 6;
+            if (el.lockInput.value.length < maxLen) {
+              el.lockInput.value += btn.dataset.key;
+            }
             el.lockInput.focus();
           });
         });
@@ -1865,6 +1997,7 @@ function doPost(e) {
 
       function renderStage(idx) {
         state.stageIndex = idx;
+        state.pickedChoices = [];
         const stage = state.stages[idx];
         const total = state.stages.length;
 
@@ -1881,7 +2014,7 @@ function doPost(e) {
           el.stageSpecimens.innerHTML = stage.specimens.map(sp => `
             <div class="mini-specimen">
               <div class="slot-tag">${sp.label}</div>
-              <img src="${sp.rock.img}" alt="${sp.label}" />
+              <img src="${sp.mineral.img}" alt="${sp.label}" />
             </div>
           `).join("");
         } else {
@@ -1893,30 +2026,35 @@ function doPost(e) {
           `<div class="clue-item">${c}</div>`
         ).join("");
 
-        if (stage.mode === "digits") {
-          el.numKeypad.style.display = "grid";
-          el.charKeypad.style.display = "none";
-          el.lockInput.placeholder = `輸入 ${stage.answer.length} 位密碼`;
-        } else {
-          el.numKeypad.style.display = "none";
-          el.charKeypad.style.display = "flex";
-          el.lockInput.placeholder = "輸入岩石名稱";
-          el.charKeypad.innerHTML = (stage.charChoices || []).map(name =>
-            `<button class="char-chip-btn" data-val="${name}" type="button">${name}</button>`
-          ).join("");
-          el.charKeypad.querySelectorAll(".char-chip-btn").forEach(b => {
-            b.addEventListener("click", () => {
-              SoundFX.click();
-              el.lockInput.value = b.dataset.val;
-            });
-          });
-        }
+        renderSelectedSlots(stage);
 
-        el.lockInput.value = "";
+        el.optionCardsGrid.innerHTML = stage.optionPool.map(opt => `
+          <button class="choice-card" data-code="${opt.code}" data-label="${opt.label}" type="button">
+            <span class="choice-code-badge">${opt.code}</span>
+            <span>${opt.label}</span>
+          </button>
+        `).join("");
+
+        el.optionCardsGrid.querySelectorAll(".choice-card").forEach(card => {
+          card.addEventListener("click", () => {
+            SoundFX.click();
+            if (state.pickedChoices.length < stage.clueCount) {
+              state.pickedChoices.push({
+                code: card.dataset.code,
+                label: card.dataset.label
+              });
+              renderSelectedSlots(stage);
+            } else {
+              el.lockFeedback.textContent = `本關只需選擇 ${stage.clueCount} 個答案，可按「退回上一格」或「清除重填」。`;
+              el.lockFeedback.className = "lock-feedback";
+            }
+          });
+        });
+
+        el.lockInput.placeholder = `輸入 ${stage.answer.length} 位密碼`;
         el.lockFeedback.textContent = "";
         el.lockFeedback.className = "lock-feedback";
         el.lockScreen.className = "lock-screen";
-        el.lockInput.focus();
 
         startStageTimer();
       }
@@ -1953,7 +2091,7 @@ function doPost(e) {
 
         const raw = el.lockInput.value.trim();
         if (!raw) {
-          el.lockFeedback.textContent = "請先輸入密碼！";
+          el.lockFeedback.textContent = "請先點選答案選項或數字鍵！";
           el.lockFeedback.className = "lock-feedback";
           return;
         }
@@ -1979,7 +2117,7 @@ function doPost(e) {
           state.score = Math.max(0, state.score - PENALTY_PER_WRONG);
           el.hudScore.textContent = String(state.score);
           el.lockScreen.className = "lock-screen error shake";
-          el.lockFeedback.textContent = `密碼錯誤！扣除 ${PENALTY_PER_WRONG} 分，請重新推敲線索。`;
+          el.lockFeedback.textContent = `密碼錯誤！扣除 ${PENALTY_PER_WRONG} 分，請重新核對線索 1～${stage.clueCount} 的選項。`;
           el.lockFeedback.className = "lock-feedback";
           setTimeout(() => el.lockScreen.classList.remove("shake"), 400);
         }
@@ -2030,9 +2168,9 @@ function doPost(e) {
         el.escapeOutcome.innerHTML = `
           <div class="outcome-box outcome-win">
             <div style="font-size:2.5rem; margin-bottom:6px;">🏆</div>
-            <h2>逃脫成功・地質探索徽章入手</h2>
+            <h2>逃脫成功・礦物探索徽章入手</h2>
             <p style="color:#d1fae5; margin-bottom:14px;">
-              恭喜 <strong>${state.student.studentName}</strong> 成功解開所有岩石密碼鎖，順利離開地質實驗室！
+              恭喜 <strong>${state.student.studentName}</strong> 成功解開所有礦物密碼鎖，順利離開實驗室！
             </p>
             <div class="score-summary">
               <div class="summary-item"><span>最終得分</span><strong>${state.score} 分</strong></div>
@@ -2041,7 +2179,7 @@ function doPost(e) {
             </div>
             <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px;">
               <button id="playAgainWinBtn" class="btn-gold" type="button">再玩一次（全新隨機題目）</button>
-              <button id="backGalleryWinBtn" class="btn-ghost" type="button">回岩石圖鑑複習</button>
+              <button id="backGalleryWinBtn" class="btn-ghost" type="button">回礦物圖鑑複習</button>
             </div>
             <div id="submitResultBanner" class="sync-status">正在傳送成績至 Google 試算表...</div>
           </div>
@@ -2063,10 +2201,10 @@ function doPost(e) {
       function initGasUrl() {
         const params = new URLSearchParams(window.location.search);
         const fromQuery = params.get("sheetUrl");
-        const fromStorage = localStorage.getItem("rock_escape_gas_url") || "";
+        const fromStorage = localStorage.getItem("mineral_escape_gas_url") || localStorage.getItem("rock_escape_gas_url") || "";
         const chosen = (fromQuery || fromStorage || "").trim();
         if (fromQuery) {
-          localStorage.setItem("rock_escape_gas_url", fromQuery.trim());
+          localStorage.setItem("mineral_escape_gas_url", fromQuery.trim());
         }
         state.gasUrl = chosen;
         el.gasUrlInput.value = chosen;
@@ -2143,12 +2281,12 @@ function doPost(e) {
 
         el.prevSpecimenBtn.addEventListener("click", () => {
           SoundFX.click();
-          openDetail(state.currentRockIndex - 1);
+          openDetail(state.currentIndex - 1);
         });
 
         el.nextSpecimenBtn.addEventListener("click", () => {
           SoundFX.click();
-          openDetail(state.currentRockIndex + 1);
+          openDetail(state.currentIndex + 1);
         });
 
         el.tiltSlider.addEventListener("input", () => {
@@ -2200,15 +2338,15 @@ function doPost(e) {
         });
 
         el.speakAllBtn.addEventListener("click", () => {
-          const rock = ROCKS_DB[state.currentRockIndex];
-          speakText(`${rock.name}。${rock.formation} 外觀特徵：${rock.appearance} 主要產地：${rock.origin} 用途：${rock.usage}`);
+          const item = MINERALS_DB[state.currentIndex];
+          speakText(`${item.name}。${item.appearance} 主要產地：${item.origin} 用途：${item.usage}`);
         });
 
         el.detailView.querySelectorAll(".btn-speak").forEach(btn => {
           btn.addEventListener("click", () => {
-            const rock = ROCKS_DB[state.currentRockIndex];
+            const item = MINERALS_DB[state.currentIndex];
             const field = btn.dataset.field;
-            speakText(`${rock.name}，${rock[field] || ""}`);
+            speakText(`${item.name}，${item[field] || ""}`);
           });
         });
 
@@ -2217,11 +2355,22 @@ function doPost(e) {
           startEscapeChallenge();
         });
 
+        el.undoChoiceBtn.addEventListener("click", () => {
+          SoundFX.click();
+          const stage = state.stages[state.stageIndex];
+          if (!stage || state.pickedChoices.length === 0) return;
+          state.pickedChoices.pop();
+          renderSelectedSlots(stage);
+        });
+
         el.clearLockBtn.addEventListener("click", () => {
           SoundFX.click();
+          const stage = state.stages[state.stageIndex];
+          state.pickedChoices = [];
           el.lockInput.value = "";
           el.lockFeedback.textContent = "";
           el.lockScreen.className = "lock-screen";
+          if (stage) renderSelectedSlots(stage);
           el.lockInput.focus();
         });
 
@@ -2261,7 +2410,7 @@ function doPost(e) {
           SoundFX.click();
           const val = el.gasUrlInput.value.trim();
           state.gasUrl = val;
-          localStorage.setItem("rock_escape_gas_url", val);
+          localStorage.setItem("mineral_escape_gas_url", val);
           el.settingsStatus.textContent = val ? "✅ 已儲存網址設定。" : "ℹ️ 已清除網址設定。";
         });
 
